@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Routes, Route, useLocation } from "react-route
 import Navbar from "./components/Navbar";
 import LoginForm from "./components/LoginForm";
 import Dashboard from "./pages/Dashboard";
-import StudyResults from "./pages/StudyResults";
+import ClassList from "./pages/ClassList";
 import Profile from "./pages/Profile";
 
 function Layout() {
@@ -15,7 +15,7 @@ function Layout() {
       <Routes>
         <Route path="/" element={<LoginForm />} />
         <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/results" element={<StudyResults />} />
+        <Route path="/results" element={<ClassList />} />
         <Route path="/profile" element={<Profile />} />
       </Routes>
     </>

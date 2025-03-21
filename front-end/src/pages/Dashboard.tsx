@@ -1,101 +1,126 @@
-export default function Schedule() {
-  const periods = [
-    { id: 1, time: "7:30 - 8:15" },
-    { id: 2, time: "8:15 - 9:00" },
-    { id: 3, time: "9:00 - 9:45" },
-    { id: 4, time: "10:00 - 10:45" },
-    { id: 5, time: "10:45 - 11:30" },
-    { id: "break", time: "Giờ nghỉ trưa" },
-    { id: 6, time: "13:00 - 13:45" },
-    { id: 7, time: "13:45 - 14:30" },
-    { id: 8, time: "14:30 - 15:15" },
-    { id: 9, time: "15:30 - 16:15" },
-    { id: 10, time: "16:15 - 17:00" },
-  ];
+import { useEffect, useState } from "react";
+import Fuse from "fuse.js";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
-  const schedule = [
-    { day: "Thứ 2", start: 1, duration: 2, subject: "Toán", room: "P11" },
-    { day: "Thứ 2", start: 3, duration: 2, subject: "Văn", room: "P11" },
-    { day: "Thứ 2", start: 5, duration: 1, subject: "Tiếng Anh", room: "P11" },
-    { day: "Thứ 3", start: 1, duration: 2, subject: "Lý", room: "P11" },
-    { day: "Thứ 3", start: 3, duration: 2, subject: "Hóa", room: "P11" },
-    { day: "Thứ 3", start: 5, duration: 1, subject: "Sinh", room: "P11" },
-    { day: "Thứ 4", start: 1, duration: 2, subject: "Lịch sử", room: "P11" },
-    { day: "Thứ 4", start: 3, duration: 2, subject: "Địa lý", room: "P11" },
-    { day: "Thứ 4", start: 5, duration: 1, subject: "GDCD", room: "P11" },
-    { day: "Thứ 5", start: 1, duration: 2, subject: "Toán", room: "P11" },
-    { day: "Thứ 5", start: 3, duration: 2, subject: "Văn", room: "P11" },
-    { day: "Thứ 5", start: 5, duration: 1, subject: "Tin học", room: "P11" },
-    { day: "Thứ 6", start: 1, duration: 2, subject: "Thể dục", room: "Sân" },
-    { day: "Thứ 6", start: 3, duration: 2, subject: "Công nghệ", room: "P11" },
-    { day: "Thứ 6", start: 5, duration: 1, subject: "Âm nhạc", room: "P11" },
-    { day: "Thứ 7", start: 1, duration: 3, subject: "Toán nâng cao", room: "P11" },
-    { day: "Thứ 7", start: 4, duration: 2, subject: "Tiếng Anh nâng cao", room: "P11" },
-  ];
+// 🟢 Giả lập API Backend (Mock API)
+const fetchStudents = async () => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      const students = [];
+      for (let i = 1; i <= 1000; i++) {
+        students.push({
+          id: i,
+          name: `Học Sinh ${i}`,
+          gender: i % 2 === 0 ? "Nam" : "Nữ",
+          dob: `200${i % 10}-0${(i % 9) + 1}-15`,
+          address: `Địa chỉ ${i}`,
+          email: `student${i}@gmail.com`,
+        });
+      }
+      resolve(students);
+    }, 1000);
+  });
+};
+
+export default function Dashboard() {
+  const [students, setStudents] = useState<any[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const studentsPerPage = 20;
+
+  useEffect(() => {
+    fetchStudents().then((data: any) => setStudents(data));
+  }, []);
+
+  // 🟢 Cấu hình Fuse.js để tìm kiếm toàn văn
+  const fuse = new Fuse(students, {
+    keys: ["name", "email", "address"],
+    threshold: 0.3, // Độ chính xác khi tìm kiếm (0 = chính xác nhất, 1 = không chính xác)
+  });
+
+  const filteredStudents = searchTerm ? fuse.search(searchTerm).map((result) => result.item) : students;
+
+  // 🔹 Xử lý phân trang
+  const totalPages = Math.ceil(filteredStudents.length / studentsPerPage);
+  const startIndex = (currentPage - 1) * studentsPerPage;
+  const paginatedStudents = filteredStudents.slice(startIndex, startIndex + studentsPerPage);
 
   return (
-    <div className="p-6 text-center">
-      <h2 className="text-xl font-semibold mb-4">📅 Thời Khóa Biểu</h2>
-      <table className="w-full border-collapse border border-gray-300">
-        <thead>
-          <tr className="bg-gray-200 text-center">
-            <th className="border p-2 w-16">Tiết</th>
-            <th className="border p-2 w-40">Thời gian</th>
-            <th className="border p-2">Thứ 2</th>
-            <th className="border p-2">Thứ 3</th>
-            <th className="border p-2">Thứ 4</th>
-            <th className="border p-2">Thứ 5</th>
-            <th className="border p-2">Thứ 6</th>
-            <th className="border p-2">Thứ 7</th>
-          </tr>
-        </thead>
-        <tbody>
-          {periods.map((period) =>
-            period.id === "break" ? (
-              <tr key={period.id} className="text-center bg-gray-100">
-                <td colSpan={8} className="border p-2 font-semibold text-red-500 border border-black p-2">
-                  {period.time}
-                </td>
-              </tr>
-            ) : (
-              <tr key={period.id} className="text-center border border-black p-2">
-                <td className="border p-2">{period.id}</td>
-                <td className="border p-2">{period.time}</td>
-                {["Thứ 2", "Thứ 3", "Thứ 4", "Thứ 5", "Thứ 6", "Thứ 7"].map((day) => {
-                  const subject = schedule.find(
-                    (item) => item.day === day && item.start === period.id
-                  );
-                  const isHidden = schedule.some(
-                    (item) =>
-                      item.day === day &&
-                      Number(period.id) > item.start &&
-                      Number(period.id) < item.start + item.duration
-                  );
+    <Card className="p-4 max-w-5xl mx-auto mt-10">
+      <CardContent>
+        <h2 className="text-xl font-semibold mb-4">Quản lý học sinh</h2>
 
-                  return (
-                    <td
-                      key={day}
-                      className={`border p-2 ${
-                        subject ? "bg-blue-100 font-semibold border border-black p-2" : ""
-                      }`}
-                      rowSpan={subject ? subject.duration : 1}
-                      style={{ display: isHidden ? "none" : "table-cell" }}
-                    >
-                      {subject ? (
-                        <>
-                          {subject.subject}
-                          <br />
-                          <span className="text-gray-500">Phòng: {subject.room}</span>
-                        </>
-                      ) : null}
-                    </td>
-                  );
-                })}
-              </tr>
-            )
-          )}
-        </tbody>
-      </table>
-    </div>
+        {/* 🔍 Ô tìm kiếm */}
+        <Input
+          placeholder="Tìm kiếm theo tên, email, địa chỉ..."
+          className="mb-4"
+          value={searchTerm}
+          onChange={(e) => {
+            setSearchTerm(e.target.value);
+            setCurrentPage(1); // Reset về trang đầu khi tìm kiếm
+          }}
+        />
+        {/* 🟢 Nút Thêm Mới */}
+        <Button className="mt-4 w-full">Thêm học sinh</Button>
+        {/* 📋 Danh sách học sinh */}
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>ID</TableHead>
+              <TableHead>Họ Tên</TableHead>
+              <TableHead>Giới Tính</TableHead>
+              <TableHead>Ngày Sinh</TableHead>
+              <TableHead>Địa Chỉ</TableHead>
+              <TableHead>Email</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {paginatedStudents.length > 0 ? (
+              paginatedStudents.map((student) => (
+                <TableRow key={student.id}>
+                  <TableCell>{student.id}</TableCell>
+                  <TableCell>{student.name}</TableCell>
+                  <TableCell>{student.gender}</TableCell>
+                  <TableCell>{student.dob}</TableCell>
+                  <TableCell>{student.address}</TableCell>
+                  <TableCell>{student.email}</TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={6} className="text-center text-gray-500">
+                  Không tìm thấy học sinh nào.
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+
+        {/* 🟢 Pagination */}
+        <div className="flex justify-between items-center mt-4">
+          <Button
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            disabled={currentPage === 1}
+            variant="outline"
+          >
+            <ChevronLeft className="h-4 w-4" /> Trang trước
+          </Button>
+          <span className="text-gray-700">Trang {currentPage} / {totalPages}</span>
+          <Button
+            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+            disabled={currentPage === totalPages}
+            variant="outline"
+          >
+            Trang sau <ChevronRight className="h-4 w-4" />
+          </Button>
+        </div>
+
+
+      </CardContent>
+    </Card>
   );
 }
