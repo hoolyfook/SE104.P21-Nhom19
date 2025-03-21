@@ -13,7 +13,7 @@ const generateClasses = () => {
     for (let j = 1; j <= 40; j++) {
       students.push({
         id: j,
-        name: `Học Sinh ${j} - Lớp ${i}`,
+        name: `Học Sinh ${j}`,
         gender: j % 2 === 0 ? "Nam" : "Nữ",
         dob: `201${j % 10}-0${(j % 9) + 1}-15`,
         address: `Địa chỉ ${j}`,

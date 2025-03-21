@@ -1,9 +1,11 @@
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
 import LoginForm from "./components/LoginForm";
 import Dashboard from "./pages/Dashboard";
 import ClassList from "./pages/ClassList";
 import Profile from "./pages/Profile";
+import StudyResults from "./pages/StudentResult"
 
 function Layout() {
   const location = useLocation();
@@ -17,7 +19,9 @@ function Layout() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/results" element={<ClassList />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/studyresult" element={<StudyResults />} />
       </Routes>
+      {!hideNavbar && <Footer />}
     </>
   );
 }

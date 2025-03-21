@@ -4,9 +4,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Trash } from "lucide-react";
 
-// 🟢 Giả lập API Backend (Mock API)
 const fetchStudents = async () => {
   return new Promise((resolve) => {
     setTimeout(() => {
@@ -26,6 +25,12 @@ const fetchStudents = async () => {
   });
 };
 
+const deleteStudent = async (id: any) => {
+  console.log("Xóa học sinh có ID:", id);
+  // Gửi API xóa (giả lập)
+  await new Promise((resolve) => setTimeout(resolve, 500));
+};
+
 export default function Dashboard() {
   const [students, setStudents] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -36,15 +41,13 @@ export default function Dashboard() {
     fetchStudents().then((data: any) => setStudents(data));
   }, []);
 
-  // 🟢 Cấu hình Fuse.js để tìm kiếm toàn văn
   const fuse = new Fuse(students, {
     keys: ["name", "email", "address"],
-    threshold: 0.3, // Độ chính xác khi tìm kiếm (0 = chính xác nhất, 1 = không chính xác)
+    threshold: 0.3,
   });
 
   const filteredStudents = searchTerm ? fuse.search(searchTerm).map((result) => result.item) : students;
 
-  // 🔹 Xử lý phân trang
   const totalPages = Math.ceil(filteredStudents.length / studentsPerPage);
   const startIndex = (currentPage - 1) * studentsPerPage;
   const paginatedStudents = filteredStudents.slice(startIndex, startIndex + studentsPerPage);
@@ -53,20 +56,16 @@ export default function Dashboard() {
     <Card className="p-4 max-w-5xl mx-auto mt-10">
       <CardContent>
         <h2 className="text-xl font-semibold mb-4">Quản lý học sinh</h2>
-
-        {/* 🔍 Ô tìm kiếm */}
         <Input
           placeholder="Tìm kiếm theo tên, email, địa chỉ..."
           className="mb-4"
           value={searchTerm}
           onChange={(e) => {
             setSearchTerm(e.target.value);
-            setCurrentPage(1); // Reset về trang đầu khi tìm kiếm
+            setCurrentPage(1);
           }}
         />
-        {/* 🟢 Nút Thêm Mới */}
         <Button className="mt-4 w-full">Thêm học sinh</Button>
-        {/* 📋 Danh sách học sinh */}
         <Table>
           <TableHeader>
             <TableRow>
@@ -76,6 +75,7 @@ export default function Dashboard() {
               <TableHead>Ngày Sinh</TableHead>
               <TableHead>Địa Chỉ</TableHead>
               <TableHead>Email</TableHead>
+              <TableHead></TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -88,38 +88,31 @@ export default function Dashboard() {
                   <TableCell>{student.dob}</TableCell>
                   <TableCell>{student.address}</TableCell>
                   <TableCell>{student.email}</TableCell>
+                  <TableCell>
+                    <Button variant="destructive" size="icon" onClick={() => deleteStudent(student.id)}>
+                      <Trash className="h-4 w-4" />
+                    </Button>
+                  </TableCell>
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={6} className="text-center text-gray-500">
+                <TableCell colSpan={7} className="text-center text-gray-500">
                   Không tìm thấy học sinh nào.
                 </TableCell>
               </TableRow>
             )}
           </TableBody>
         </Table>
-
-        {/* 🟢 Pagination */}
         <div className="flex justify-between items-center mt-4">
-          <Button
-            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-            disabled={currentPage === 1}
-            variant="outline"
-          >
+          <Button onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))} disabled={currentPage === 1} variant="outline">
             <ChevronLeft className="h-4 w-4" /> Trang trước
           </Button>
           <span className="text-gray-700">Trang {currentPage} / {totalPages}</span>
-          <Button
-            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-            disabled={currentPage === totalPages}
-            variant="outline"
-          >
+          <Button onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))} disabled={currentPage === totalPages} variant="outline">
             Trang sau <ChevronRight className="h-4 w-4" />
           </Button>
         </div>
-
-
       </CardContent>
     </Card>
   );
