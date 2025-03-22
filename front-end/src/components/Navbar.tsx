@@ -25,13 +25,14 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="bg-blue-600 text-white p-4 flex justify-between items-center">
+    <nav className="bg-gray-700 text-white p-4 flex justify-between items-center">
         <div className="flex items-center space-x-4">
         <img src="https://cryptologos.cc/logos/pepe-pepe-logo.png" alt="header_logo" className="w-20 h-20" />
         <div className="flex space-x-4">
             <Link to="/dashboard" className="text-[20px] font-bold px-4 py-2 hover:bg-gray-300 hover:text-black rounded">Danh sách học sinh</Link>
             <Link to="/results" className="text-[20px] font-bold px-4 py-2 hover:bg-gray-300 hover:text-black rounded">Danh sách lớp</Link>
             <Link to="/studyresult" className="text-[20px] font-bold px-4 py-2 hover:bg-gray-300 hover:text-black rounded">Kết quả học tập</Link>
+            <Link to="/gradereport" className="text-[20px] font-bold px-4 py-2 hover:bg-gray-300 hover:text-black rounded">Kết quả môn</Link>
             <Link to="/profile" className="text-[20px] font-bold px-4 py-2 hover:bg-gray-300 hover:text-black rounded">Hồ sơ cá nhân</Link>
         </div>
         </div>

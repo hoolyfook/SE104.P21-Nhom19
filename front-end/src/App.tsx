@@ -6,6 +6,7 @@ import Dashboard from "./pages/Dashboard";
 import ClassList from "./pages/ClassList";
 import Profile from "./pages/Profile";
 import StudyResults from "./pages/StudentResult"
+import GradeReport from "./pages/GradeReport"
 
 function Layout() {
   const location = useLocation();
@@ -20,6 +21,7 @@ function Layout() {
         <Route path="/results" element={<ClassList />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/studyresult" element={<StudyResults />} />
+        <Route path="/gradereport" element={<GradeReport />} />
       </Routes>
       {!hideNavbar && <Footer />}
     </>
