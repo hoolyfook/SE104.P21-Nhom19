@@ -1,19 +1,25 @@
-// models/Lops.js
+'use strict';
+const {
+  Model
+} = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-    const Lops = sequelize.define("Lops", {
-        maLop: { type: DataTypes.STRING, primaryKey: true },
-        tenLop: { type: DataTypes.STRING, allowNull: false },
-        khoiLop: { type: DataTypes.ENUM('10', '11', '12'), allowNull: false },
-        siSo: { type: DataTypes.INTEGER }
-    });
-
-    Lops.associate = function(models) {
-        Lops.hasMany(models.BangDiems, { foreignKey: 'maLop' });
-        Lops.hasMany(models.HocSinh_Lops, { foreignKey: 'maLop' });
-        Lops.hasMany(models.GiangVien_Lop_Mons, { foreignKey: 'maLop' });
-        Lops.hasMany(models.BaoCaoTongKetMons, { foreignKey: 'maLop' });
-        Lops.hasMany(models.BaoCaoTongKetHocKys, { foreignKey: 'maLop' });
-    };
-
-    return Lops;
+  class Lops extends Model {
+    static associate(models) {
+      Lops.hasMany(models.BangDiems, { foreignKey: 'maLop', as: 'BangDiems' });
+      Lops.hasMany(models.GiangVien_Lop_Mons, { foreignKey: 'maLop', as: 'GiangVien_Lop_Mons' });
+      Lops.hasMany(models.BaoCaoTongKetMons, { foreignKey: 'maLop', as: 'BaoCaoTongKetMons' });
+      Lops.hasMany(models.BaoCaoTongKetHocKys, { foreignKey: 'maLop', as: 'BaoCaoTongKetHocKys' });
+      Lops.hasMany(models.Users, { foreignKey: 'maLop', as: 'Users' });
+    }
+  }
+  Lops.init({
+    maLop: { type: DataTypes.STRING, primaryKey: true },
+    tenLop: { type: DataTypes.STRING, allowNull: false },
+    khoiLop: { type: DataTypes.ENUM('10', '11', '12'), allowNull: false },
+    siSo: { type: DataTypes.INTEGER }
+  }, {
+    sequelize,
+    modelName: 'Lops',
+  });
+  return Lops;
 };

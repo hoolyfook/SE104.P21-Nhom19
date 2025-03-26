@@ -1,9 +1,15 @@
-// models/HocSinh_Lops.js
+'use strict';
+const {
+  Model
+} = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-    const HocSinh_Lops = sequelize.define("HocSinh_Lops", {
-        maHS: { type: DataTypes.INTEGER, references: { model: 'HocSinhs', key: 'maHS' } },
-        maLop: { type: DataTypes.STRING, references: { model: 'Lops', key: 'maLop' } }
-    });
-
-    return HocSinh_Lops;
+  class HocSinh_Lops extends Model {}
+  HocSinh_Lops.init({
+    maHS: { type: DataTypes.INTEGER, references: { model: 'Users', key: 'maHS' } },
+    maLop: { type: DataTypes.STRING, references: { model: 'Lops', key: 'maLop' } }
+  }, {
+    sequelize,
+    modelName: 'HocSinh_Lops',
+  });
+  return HocSinh_Lops;
 };

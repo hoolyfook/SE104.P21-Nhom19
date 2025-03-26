@@ -1,9 +1,15 @@
-// models/QuyDinhs.js
+'use strict';
+const {
+  Model
+} = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-    const QuyDinhs = sequelize.define("QuyDinhs", {
-        moTa: { type: DataTypes.TEXT, allowNull: false },
-        giaTri: { type: DataTypes.INTEGER, allowNull: true }
-    });
-
-    return QuyDinhs;
+  class QuyDinhs extends Model {}
+  QuyDinhs.init({
+    moTa: { type: DataTypes.TEXT, allowNull: false },
+    giaTri: { type: DataTypes.INTEGER, allowNull: true }
+  }, {
+    sequelize,
+    modelName: 'QuyDinhs',
+  });
+  return QuyDinhs;
 };

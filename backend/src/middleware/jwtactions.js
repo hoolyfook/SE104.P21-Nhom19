@@ -1,11 +1,9 @@
 import jwt from "jsonwebtoken"
 import 'dotenv/config';
 
-const nonSecurePath = ["/auth/steam", "/auth/steam/return", "/jwt/steamid",
-    "/cases", "/cases/skins", "/users/logout", "/users/quantity",
-    "/users/opened/quantity", "/users/upgraded/quantity"]
+const nonSecurePath = ["/login"]
 
-const createJWT = (payload) => {  // create json web token
+export const createJWT = (payload) => {  // create json web token
     let key = process.env.JWT_KEY
     let token = null
     try {
@@ -15,7 +13,8 @@ const createJWT = (payload) => {  // create json web token
     }
     return token;
 }
-const verifyToken = (token) => {  // verify token
+
+export const verifyToken = (token) => {  // verify token
     let key = process.env.JWT_KEY
     let decoded = null
     try {
@@ -25,11 +24,12 @@ const verifyToken = (token) => {  // verify token
     }
     return decoded
 }
-const checkUserJWT = (req, res, next) => {  // check user json web token
+
+export const checkUserJWT = (req, res, next) => {  // check user json web token
     if (nonSecurePath.includes(req.path)) return next();
     let cookies = req.cookies;
-    if (cookies && cookies.jwt) {
-        let token = cookies.jwt
+    if (cookies && cookies.qlhs) {
+        let token = cookies.qlhs
         let decoded = verifyToken(token)
         if (decoded) {
             req.jwt = decoded
@@ -49,7 +49,8 @@ const checkUserJWT = (req, res, next) => {  // check user json web token
         })
     }
 }
-const checkUserPermisson = (req, res, next) => {  // control user's permisson
+
+export const checkUserPermisson = (req, res, next) => {  // control user's permisson
     if (nonSecurePath.includes(req.path)) return next();
     if (req.jwt) {
         let roles = req.jwt.data
@@ -61,7 +62,7 @@ const checkUserPermisson = (req, res, next) => {  // control user's permisson
                 EM: "User do not have permission"
             })
         }
-        let checkRole = roles.some(item => item.Role.URL === currentURL)
+        let checkRole = roles.some(item => item.Roles.url === currentURL)
         if (checkRole === true) {
             next();
         } else {
@@ -78,7 +79,4 @@ const checkUserPermisson = (req, res, next) => {  // control user's permisson
             EM: "User is not authenticates"
         })
     }
-}
-module.exports = {
-    createJWT, verifyToken, checkUserJWT, checkUserPermisson
 }

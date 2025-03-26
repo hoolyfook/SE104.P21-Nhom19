@@ -1,59 +1,65 @@
-// migrations/YYYYMMDDHHMMSS-create-bangdiems.js
+// migrations/[timestamp]-create-bangdiems.js
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.createTable('BangDiems', {
       id: {
         type: Sequelize.INTEGER,
-        allowNull: false,
-        autoIncrement: true,
         primaryKey: true,
+        autoIncrement: true,
+        allowNull: false
       },
       maHS: {
         type: Sequelize.INTEGER,
         references: {
-          model: 'HocSinhs',
-          key: 'id',
+          model: 'Users',
+          key: 'id'
         },
+        allowNull: false
       },
       maLop: {
         type: Sequelize.STRING,
         references: {
           model: 'Lops',
-          key: 'maLop',
+          key: 'maLop'
         },
+        allowNull: false
       },
       maMon: {
         type: Sequelize.STRING,
         references: {
           model: 'MonHocs',
-          key: 'maMon',
+          key: 'maMon'
         },
+        allowNull: false
       },
       hocKy: {
         type: Sequelize.ENUM('I', 'II'),
-        allowNull: false,
+        allowNull: false
       },
       diem15p: {
         type: Sequelize.FLOAT,
+        allowNull: true
       },
       diem1Tiet: {
         type: Sequelize.FLOAT,
+        allowNull: true
       },
       diemTB: {
         type: Sequelize.FLOAT,
+        allowNull: true
       },
       createdAt: {
         type: Sequelize.DATE,
-        allowNull: false,
+        defaultValue: Sequelize.NOW
       },
       updatedAt: {
         type: Sequelize.DATE,
-        allowNull: false,
-      },
+        defaultValue: Sequelize.NOW
+      }
     });
   },
 
   down: async (queryInterface, Sequelize) => {
     await queryInterface.dropTable('BangDiems');
-  },
+  }
 };

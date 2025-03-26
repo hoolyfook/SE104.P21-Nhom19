@@ -1,12 +1,18 @@
-// models/GroupUsers.js
+'use strict';
+const {
+  Model
+} = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-    const GroupUsers = sequelize.define("GroupUsers", {
-        name: { type: DataTypes.STRING, allowNull: false }
-    });
-
-    GroupUsers.associate = function(models) {
-        GroupUsers.hasMany(models.Users, { foreignKey: 'groupUserId' });
-    };
-
-    return GroupUsers;
+  class GroupUsers extends Model {
+    static associate(models) {
+      GroupUsers.belongsToMany(models.Roles, { through: models.GroupRoles, foreignKey: 'GroupID', otherKey: 'RoleID', as: 'Roles' });
+    }
+  }
+  GroupUsers.init({
+    name: { type: DataTypes.STRING, allowNull: false }
+  }, {
+    sequelize,
+    modelName: 'GroupUsers',
+  });
+  return GroupUsers;
 };

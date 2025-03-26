@@ -1,5 +1,5 @@
 'use strict';
-require('dotenv').config();
+
 const fs = require('fs');
 const path = require('path');
 const Sequelize = require('sequelize');
@@ -27,8 +27,13 @@ fs
     );
   })
   .forEach(file => {
-    const model = require(path.join(__dirname, file))(sequelize, Sequelize.DataTypes);
-    db[model.name] = model;
+    const modelPath = path.join(__dirname, file);
+    const model = require(modelPath);
+    if (typeof model !== 'function') {
+      console.error(`Model file ${file} does not export a function`);
+      return;
+    }
+    db[model(sequelize, Sequelize.DataTypes).name] = model(sequelize, Sequelize.DataTypes);
   });
 
 Object.keys(db).forEach(modelName => {

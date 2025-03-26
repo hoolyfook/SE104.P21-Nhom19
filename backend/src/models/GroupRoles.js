@@ -1,14 +1,20 @@
-// models/GroupRoles.js
+'use strict';
+const {
+  Model
+} = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-    const GroupRoles = sequelize.define("GroupRoles", {
-        GroupID: { type: DataTypes.INTEGER, references: { model: 'GroupUsers', key: 'id' } },
-        RoleID: { type: DataTypes.INTEGER, references: { model: 'Roles', key: 'id' } }
-    });
-
-    GroupRoles.associate = function(models) {
-        GroupRoles.belongsTo(models.GroupUsers, { foreignKey: 'GroupID' });
-        GroupRoles.belongsTo(models.Roles, { foreignKey: 'RoleID' });
-    };
-
-    return GroupRoles;
+  class GroupRoles extends Model {
+    static associate(models) {
+      GroupRoles.belongsTo(models.GroupUsers, { foreignKey: 'GroupID', as: 'GroupUsers' });
+      GroupRoles.belongsTo(models.Roles, { foreignKey: 'RoleID', as: 'Roles' });
+    }
+  }
+  GroupRoles.init({
+    GroupID: { type: DataTypes.INTEGER, references: { model: 'GroupUsers', key: 'id' } },
+    RoleID: { type: DataTypes.INTEGER, references: { model: 'Roles', key: 'id' } }
+  }, {
+    sequelize,
+    modelName: 'GroupRoles',
+  });
+  return GroupRoles;
 };
