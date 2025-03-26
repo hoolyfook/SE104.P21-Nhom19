@@ -1,22 +1,7 @@
-import loginService from "../service/loginService.js"
-const getRoles = async (req, res) => {
-    try {
-        let data = await loginService.getRoles();
-        return res.status(200).json({
-            EM: data.EM,
-            EC: data.EC,
-            DT: data.DT
-        })
-    } catch (e) {
-        console.log(e)
-        return res.status(500).json({
-            EM: "Error from server",
-            EC: "-1",
-            DT: ""
-        })
-    }
-}
-const getJWT = async (req, res) => {
+import adminService from '../service/adminService.js';
+
+const getUsers = async (req, res) => {
+
     try {
         if (!req.cookies.jwt || !req.cookies.login) {  // cookie did not exist
             let data = await loginService.getGroupRoles(req.body.email, req.body.password);
@@ -44,18 +29,12 @@ const getJWT = async (req, res) => {
         })
     }
 }
-const renderLoginPage = async (req, res) => {
-    try {
-        const rolesData = await loginService.getRoles();
-        res.render('login', { roles: rolesData.DT });
-    } catch (e) {
-        console.log(e);
-        res.render('login', { roles: [] });
-    }
-};
-const loginController={
-    renderLoginPage,
-    getJWT,
-    getRoles
+const createUser = async (req, res) => {
+    let result = await adminService.createUser(req.body);
+    res.json(result);
 }
-export default loginController;
+const adminController={
+    getJWT,
+    logoutUser
+}
+export default adminController;

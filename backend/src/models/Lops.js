@@ -9,8 +9,10 @@ module.exports = (sequelize, DataTypes) => {
       Lops.hasMany(models.GiangVien_Lop_Mons, { foreignKey: 'maLop', as: 'GiangVien_Lop_Mons' });
       Lops.hasMany(models.BaoCaoTongKetMons, { foreignKey: 'maLop', as: 'BaoCaoTongKetMons' });
       Lops.hasMany(models.BaoCaoTongKetHocKys, { foreignKey: 'maLop', as: 'BaoCaoTongKetHocKys' });
-      Lops.hasMany(models.Users, { foreignKey: 'maLop', as: 'Users' });
-    }
+      Lops.belongsToMany(models.Users, {
+        through: models.HocSinh_Lops,
+        foreignKey: 'maLop'
+      });    }
   }
   Lops.init({
     maLop: { type: DataTypes.STRING, primaryKey: true },
