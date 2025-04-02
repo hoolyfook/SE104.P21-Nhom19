@@ -3,23 +3,12 @@ import adminService from '../service/adminService.js';
 const getUsers = async (req, res) => {
 
     try {
-        if (!req.cookies.jwt || !req.cookies.login) {  // cookie did not exist
-            let data = await loginService.getGroupRoles(req.body.email, req.body.password);
-            if (data && data.DT && data.DT.access_token) {  // set cookie
-                res.cookie("qlhs", data.DT.access_token, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 })
-            }
-            return res.status(200).json({
-                EM: data.EM,
-                EC: data.EC,
-                DT: data.DT
-            })
-        } else {
-            return res.status(400).json({
-                EM: "User have been logined",
-                EC: "-1",
-                DT: ""
-            })
-        }
+        let data = await adminService.getUsers();
+        return res.status(200).json({
+            EM: data.EM,
+            EC: data.EC,
+            DT: data.DT
+        })
     } catch (e) {
         console.log(e)
         return res.status(500).json({
@@ -30,11 +19,284 @@ const getUsers = async (req, res) => {
     }
 }
 const createUser = async (req, res) => {
-    let result = await adminService.createUser(req.body);
-    res.json(result);
+    try {
+        let data = await adminService.createUser(req.body);
+        return res.status(200).json({
+            EM: data.EM,
+            EC: data.EC,
+            DT: data.DT
+        })
+    }
+    catch (e) {
+        console.log(e)
+        return res.status(500).json({
+            EM: "Error from server",
+            EC: "-1",
+            DT: ""
+        })
+    }
 }
-const adminController={
-    getJWT,
-    logoutUser
+const updateUser = async (req, res) => {
+    try {
+        let data = await adminService.updateUser(req.body);
+        return res.status(200).json({
+            EM: data.EM,
+            EC: data.EC,
+            DT: data.DT
+        })
+    }
+    catch (e) {
+        console.log(e)
+        return res.status(500).json({
+            EM: "Error from server",
+            EC: "-1",
+            DT: ""
+        })
+    }
+}
+const deleteUser = async (req, res) => {
+    try {
+        let data = await adminService.deleteUser(req.body.id);
+        return res.status(200).json({
+            EM: data.EM,
+            EC: data.EC,
+            DT: data.DT
+        })
+    }
+    catch (e) {
+        console.log(e)
+        return res.status(500).json({
+            EM: "Error from server",
+            EC: "-1",
+            DT: ""
+        })
+    }
+}
+const getQuyDinhs = async (req, res) => {
+    try {
+        let data = await adminService.getQuyDinh();
+        return res.status(200).json({
+            EM: data.EM,
+            EC: data.EC,
+            DT: data.DT
+        })
+    } catch (e) {
+        console.log(e)
+        return res.status(500).json({
+            EM: "Error from server",
+            EC: "-1",
+            DT: ""
+        })
+    }
+}
+const createQuyDinh = async (req, res) => {
+    try {
+        let data = await adminService.createQuyDinh(req.body);
+        return res.status(200).json({
+            EM: data.EM,
+            EC: data.EC,
+            DT: data.DT
+        })
+    } catch (e) {
+        console.log(e)
+        return res.status(500).json({
+            EM: "Error from server",
+            EC: "-1",
+            DT: ""
+        })
+    }
+}
+const updateQuyDinh = async (req, res) => {
+    try {
+        let data = await adminService.updateQuyDinh(req.body);
+        return res.status(200).json({
+            EM: data.EM,
+            EC: data.EC,
+            DT: data.DT
+        })
+    } catch (e) {
+        console.log(e)
+        return res.status(500).json({
+            EM: "Error from server",
+            EC: "-1",
+            DT: ""
+        })
+    }
+}
+const deleteQuyDinh = async (req, res) => {
+    try {
+        let data = await adminService.deleteQuyDinh(req.body.id);
+        return res.status(200).json({
+            EM: data.EM,
+            EC: data.EC,
+            DT: data.DT
+        })
+    } catch (e) {
+        console.log(e)
+        return res.status(500).json({
+            EM: "Error from server",
+            EC: "-1",
+            DT: ""
+        })
+    }
+}
+const getLops = async (req, res) => {
+    try {
+        let data = await adminService.getLops();
+        return res.status(200).json({
+            EM: data.EM,
+
+            EC: data.EC,
+            DT: data.DT
+        })
+    } catch (e) {
+
+        console.log(e)
+        return res.status(500).json({
+            EM: "Error from server",
+            EC: "-1",
+            DT: ""
+        })
+    }
+}
+const createLop = async (req, res) => {
+    try {
+        let data = await adminService.createLop(req.body);
+        return res.status(200).json({
+            EM: data.EM,
+            EC: data.EC,
+            DT: data.DT
+        })
+    } catch (e) {
+        console.log(e)
+        return res.status(500).json({
+            EM: "Error from server",
+            EC: "-1",
+            DT: ""
+        })
+    }
+}
+const updateLop = async (req, res) => {
+    try {
+        let data = await adminService.updateLop(req.body);
+        return res.status(200).json({
+            EM: data.EM,
+            EC: data.EC,
+            DT: data.DT
+        })
+    } catch (e) {
+        console.log(e)
+        return res.status(500).json({
+            EM: "Error from server",
+            EC: "-1",
+            DT: ""
+        })
+    }
+}
+const deleteLop = async (req, res) => {
+    try {
+        let data = await adminService.deleteLop(req.body.maLop);
+        return res.status(200).json({
+            EM: data.EM,
+            EC: data.EC,
+            DT: data.DT
+        })
+    }
+    catch (e) {
+        console.log(e)
+        return res.status(500).json({
+            EM: "Error from server",
+            EC: "-1",
+            DT: ""
+        })
+    }
+}
+
+const getMonHocs = async (req, res) => {
+    try {
+        let data = await adminService.getMonHocs();
+        return res.status(200).json({
+            EM: data.EM,
+            EC: data.EC,
+            DT: data.DT
+        })
+    } catch (e) {
+        console.log(e)
+        return res.status(500).json({
+            EM: "Error from server",
+            EC: "-1",
+            DT: ""
+        })
+    }
+}
+const createMonHoc = async (req, res) => {
+    try {
+        let data = await adminService.createMonHoc(req.body);
+        return res.status(200).json({
+            EM: data.EM,
+            EC: data.EC,
+            DT: data.DT
+        })
+    } catch (e) {
+        console.log(e)
+        return res.status(500).json({
+            EM: "Error from server",
+            EC: "-1",
+            DT: ""
+        })
+    }
+}
+const updateMonHoc = async (req, res) => {
+    try {
+        let data = await adminService.updateMonHoc(req.body);
+        return res.status(200).json({
+            EM: data.EM,
+            EC: data.EC,
+            DT: data.DT
+        })
+    } catch (e) {
+        console.log(e)
+        return res.status(500).json({
+            EM: "Error from server",
+            EC: "-1",
+            DT: ""
+        })
+    }
+}
+const deleteMonHoc = async (req, res) => {
+    try {
+        let data = await adminService.deleteMonHoc(req.body.maMon);
+        return res.status(200).json({
+            EM: data.EM,
+            EC: data.EC,
+            DT: data.DT
+        })
+    } catch (e) {
+        console.log(e)
+        return res.status(500).json({
+            EM: "Error from server",
+            EC: "-1",
+            DT: ""
+        })
+    }
+}
+
+const adminController = {
+    getUsers,
+    createUser,
+    updateUser,
+    deleteUser,
+    getQuyDinhs,
+    createQuyDinh,
+    updateQuyDinh,
+    deleteQuyDinh,
+    getLops,
+    createLop,
+    updateLop,
+    deleteLop,
+    getMonHocs,
+    createMonHoc,
+    updateMonHoc,
+    deleteMonHoc
 }
 export default adminController;
