@@ -2,8 +2,8 @@ import db from "../models/index.js";
 import 'dotenv/config';
 import { createJWT } from "../middleware/jwtactions.js";
 
-const getGroupRoles = async (email,password) => {  // get roles to create JWT
-    try {        
+const getGroupRoles = async (email, password) => {  // get roles to create JWT
+    try {
         let user = await db.Users.findOne({
             where: {
                 email: email,
@@ -20,7 +20,8 @@ const getGroupRoles = async (email,password) => {  // get roles to create JWT
                     model: db.Roles,
                     as: 'Roles',
                     attributes: ['url']
-                }});
+                }
+            });
             let payload = {
                 email: email,
                 data: roles,
@@ -93,9 +94,9 @@ const getUserInfo = async (email) => {
             where: {
                 email: email
             },
-            attributes: ['id','hoTen', 'gioiTinh', 'ngaySinh', 'email', 'diaChi'],
+            attributes: ['id', 'hoTen', 'gioiTinh', 'ngaySinh', 'email', 'diaChi'],
         });
-        
+
         if (user) {
             user = user.get({ plain: true });
             let lop = await db.HocSinh_Lops.findAll({
@@ -113,7 +114,7 @@ const getUserInfo = async (email) => {
             return {
                 EM: "Get user info success",
                 EC: "0",
-                DT: {user, lop}
+                DT: { user, lop }
             };
         } else {
             return {
