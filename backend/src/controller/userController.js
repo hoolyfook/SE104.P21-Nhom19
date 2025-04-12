@@ -9,7 +9,7 @@ const getJWT = async (req, res) => {
             return res.status(200).json({
                 EM: data.EM,
                 EC: data.EC,
-                DT: data.DT
+                DT: []
             })
         } else {
             return res.status(400).json({
@@ -79,7 +79,7 @@ const getUserInfo = async (req, res) => {  // get user info controller
         })
     }
 }
-const userController={
+const userController = {
     getJWT,
     logoutUser,
     changePassword,

@@ -59,44 +59,6 @@ const createUser = async (data) => {
                 groupUserId: groupUserId.id
             });
             user = user.get({ plain: true });
-            if (data.GroupUsers === "student") {
-                let siSomax = await db.QuyDinhs.findOne({
-                    where: { moTa: "Sĩ số tối đa của lớp" },
-                    attributes: ['giaTri']
-                });
-                siSomax = siSomax.get({ plain: true });
-                let count = await db.HocSinh_Lops.count({
-                    where: { maLop: data.maLop }
-                });
-                if (siSomax.giaTri > count) {
-                    let classId = await db.Lops.findOne({
-                        where: { maLop: data.maLop },
-                    });
-                    if (classId === null) {
-                        return {
-                            EM: "Class not found",
-                            EC: "-1",
-                            DT: [],
-                        }
-                    }
-                    await db.HocSinh_Lops.create({
-                        maHS: user.id,
-                        maLop: data.maLop
-                    });
-                    await db.Lops.update({
-                        siSo: count + 1
-                    }, {
-                        where: { maLop: data.maLop }
-                    });
-                }
-                else {
-                    return {
-                        EM: "Class full",
-                        EC: "-1",
-                        DT: [],
-                    }
-                }
-            }
             return {
                 EM: "Create User success",
                 EC: "0",
@@ -484,6 +446,402 @@ const deleteMonHoc = async (maMon) => {
         }
     }
 }
+const getPhanCong = async () => {
+    try {
+        let phancong = await db.GiangVien_Lop_Mons.findAll({
+            attributes: ['id', 'maGV', 'maMon', 'maLop'],
+            include: [
+                {
+                    model: db.Users,
+                    as: 'Users',
+                    attributes: ['hoTen']
+                },
+                {
+                    model: db.MonHocs,
+                    as: 'MonHocs',
+                    attributes: ['tenMon']
+                },
+                {
+                    model: db.Lops,
+                    as: 'Lops',
+                    attributes: ['tenLop']
+                }
+            ]
+        });
+        return {
+            EM: "Get PhanCong success",
+            EC: "0",
+            DT: phancong,
+        }
+    } catch (e) {
+        console.log(e)
+        return {
+            EM: "Error from server",
+            EC: "-1",
+            DT: [],
+        }
+    }
+}
+const createPhanCong = async (data) => {
+    try {
+        let gv = await db.Users.findOne({
+            where: {
+                id: data.maGV,
+                groupUserId: 2
+            },
+            attributes: ['id']
+        });
+        if (gv === null) {
+            return {
+                EM: "GiangVien not found",
+                EC: "-1",
+                DT: [],
+            }
+        }
+        let mon = await db.MonHocs.findOne({
+            where: { maMon: data.maMon },
+            attributes: ['maMon']
+        });
+        if (mon === null) {
+            return {
+                EM: "MonHoc not found",
+                EC: "-1",
+                DT: [],
+            }
+        }
+        let lop = await db.Lops.findOne({
+            where: { maLop: data.maLop },
+            attributes: ['maLop']
+        });
+        if (lop === null) {
+            return {
+                EM: "Lop not found",
+                EC: "-1",
+                DT: [],
+            }
+        }
+        let phancong = await db.GiangVien_Lop_Mons.findOne({
+            where: {
+                maGV: data.maGV,
+                maMon: data.maMon,
+                maLop: data.maLop
+            }
+        });
+        if (phancong !== null) {
+            return {
+                EM: "PhanCong already exists",
+                EC: "-1",
+                DT: [],
+            }
+        }
+        await db.GiangVien_Lop_Mons.create({
+            maGV: data.maGV,
+            maMon: data.maMon,
+            maLop: data.maLop
+        });
+        return {
+            EM: "Create PhanCong success",
+            EC: "0",
+            DT: [],
+        }
+    } catch (e) {
+        console.log(e)
+        return {
+            EM: "Error from server",
+            EC: "-1",
+            DT: [],
+        }
+    }
+}
+const updatePhanCong = async (data) => {
+    try {
+        let gv = await db.Users.findOne({
+            where: { id: data.maGV, groupUserId: 2 },
+            attributes: ['id']
+        });
+        if (gv === null) {
+            return {
+                EM: "GiangVien not found",
+                EC: "-1",
+                DT: [],
+            }
+        }
+        let mon = await db.MonHocs.findOne({
+            where: { maMon: data.maMon },
+            attributes: ['maMon']
+        });
+        if (mon === null) {
+            return {
+                EM: "MonHoc not found",
+                EC: "-1",
+                DT: [],
+            }
+        }
+        let lop = await db.Lops.findOne({
+            where: { maLop: data.maLop },
+            attributes: ['maLop']
+        });
+        if (lop === null) {
+            return {
+                EM: "Lop not found",
+                EC: "-1",
+                DT: [],
+            }
+        }
+        let phancong = await db.GiangVien_Lop_Mons.findOne({
+            where: {
+                id: data.id,
+            }
+        });
+        if (phancong === null) {
+            return {
+                EM: "PhanCong not found",
+                EC: "-1",
+                DT: [],
+            }
+        }
+        await db.GiangVien_Lop_Mons.update({
+            maGV: data.maGV,
+            maMon: data.maMon,
+            maLop: data.maLop
+        }, {
+            where: { id: phancong.id }
+        });
+        return {
+            EM: "Update PhanCong success",
+            EC: "0",
+            DT: [],
+        }
+    } catch (e) {
+        console.log(e)
+        return {
+            EM: "Error from server",
+            EC: "-1",
+            DT: [],
+        }
+    }
+}
+const deletePhanCong = async (id) => {
+    try {
+        let phancong = await db.GiangVien_Lop_Mons.findOne({
+            where: { id: id }
+        });
+        if (phancong === null) {
+            return {
+                EM: "PhanCong not found",
+                EC: "-1",
+                DT: [],
+            }
+        }
+        await db.GiangVien_Lop_Mons.destroy({
+            where: { id: id }
+        });
+        return {
+            EM: "Delete PhanCong success",
+            EC: "0",
+            DT: [],
+        }
+    } catch (e) {
+        console.log(e)
+        return {
+            EM: "Error from server",
+            EC: "-1",
+            DT: [],
+        }
+    }
+}
+const getHocSinhLop = async (data) => {
+    try {
+        let hocsinh = await db.HocSinh_Lops.findAll({
+            where: { maLop: data.maLop },
+            attributes: ['maHS'],
+            include: [
+                {
+                    model: db.Users,
+                    as: 'Users',
+                    attributes: ['hoTen']
+                }
+            ]
+        });
+        return {
+            EM: "Get HocSinhLop success",
+            EC: "0",
+            DT: hocsinh,
+        }
+    } catch (e) {
+        console.log(e)
+        return {
+            EM: "Error from server",
+            EC: "-1",
+            DT: [],
+        }
+    }
+}
+const createHocSinhLop = async (data) => {
+    try {
+        let hocsinh = await db.Users.findOne({
+            where: { id: data.maHS, groupUserId: 3 },
+            attributes: ['id']
+        });
+        if (hocsinh === null) {
+            return {
+                EM: "HocSinh not found",
+                EC: "-1",
+                DT: [],
+            }
+        }
+        let lop = await db.Lops.findOne({
+            where: { maLop: data.maLop },
+            attributes: ['maLop']
+        });
+        if (lop === null) {
+            return {
+                EM: "Lop not found",
+                EC: "-1",
+                DT: [],
+            }
+        }
+        let hocsinhlop = await db.HocSinh_Lops.findOne({
+            where: {
+                maHS: data.maHS,
+                maLop: data.maLop
+            }
+        });
+        if (hocsinhlop !== null) {
+            return {
+                EM: "HocSinhLop already exists",
+                EC: "-1",
+                DT: [],
+            }
+        }
+        let siSomax = await db.QuyDinhs.findOne({
+            where: { moTa: "Sĩ số tối đa của lớp" },
+            attributes: ['giaTri']
+        });
+        siSomax = siSomax.get({ plain: true });
+        let count = await db.HocSinh_Lops.count({
+            where: { maLop: data.maLop }
+        });
+        if (siSomax.giaTri > count) {
+            await db.HocSinh_Lops.create({
+                maHS: data.maHS,
+                maLop: data.maLop
+            });
+            await db.Lops.update({
+                siSo: count + 1
+            }, {
+                where: { maLop: data.maLop }
+            });
+            return {
+                EM: "Create HocSinhLop success",
+                EC: "0",
+                DT: [],
+            }
+        }
+        else {
+            return {
+                EM: "Class full",
+                EC: "-1",
+                DT: [],
+            }
+        }
+    } catch (e) {
+        console.log(e)
+        return {
+            EM: "Error from server",
+            EC: "-1",
+            DT: [],
+        }
+    }
+}
+const updateHocSinhLop = async (data) => {
+    try {
+        let hocsinh = await db.Users.findOne({
+            where: { id: data.maHS },
+            attributes: ['id']
+        });
+        if (hocsinh === null) {
+            return {
+                EM: "HocSinh not found",
+                EC: "-1",
+                DT: [],
+            }
+        }
+        let lop = await db.Lops.findOne({
+            where: { maLop: data.maLop },
+            attributes: ['maLop']
+        });
+        if (lop === null) {
+            return {
+                EM: "Lop not found",
+                EC: "-1",
+                DT: [],
+            }
+        }
+        let hocsinhlop = await db.HocSinh_Lops.findOne({
+            where: { id: data.id }
+        });
+        if (hocsinhlop === null) {
+            return {
+                EM: "HocSinhLop not found",
+                EC: "-1",
+                DT: [],
+            }
+        }
+        await db.HocSinh_Lops.update({
+            maHS: data.maHS,
+            maLop: data.maLop
+        }, {
+            where: { id: hocsinhlop.id }
+        });
+        return {
+            EM: "Update HocSinhLop success",
+            EC: "0",
+            DT: [],
+        }
+    } catch (e) {
+        console.log(e)
+        return {
+            EM: "Error from server",
+            EC: "-1",
+            DT: [],
+        }
+    }
+}
+const deleteHocSinhLop = async (id) => {
+    try {
+        let hocsinhlop = await db.HocSinh_Lops.findOne({
+            where: { id: id }
+        });
+        if (hocsinhlop === null) {
+            return {
+                EM: "HocSinhLop not found",
+                EC: "-1",
+                DT: [],
+            }
+        }
+        await db.HocSinh_Lops.destroy({
+            where: { id: id }
+        });
+        await db.Lops.update({
+            siSo: count - 1
+        }, {
+            where: { maLop: hocsinhlop.maLop }
+        });
+        return {
+            EM: "Delete HocSinhLop success",
+            EC: "0",
+            DT: [],
+        }
+    } catch (e) {
+        console.log(e)
+        return {
+            EM: "Error from server",
+            EC: "-1",
+            DT: [],
+        }
+    }
+}
 const adminService = {
     getUsers,
     createUser,
@@ -501,6 +859,15 @@ const adminService = {
     createMonHoc,
     updateMonHoc,
     deleteMonHoc,
+    getPhanCong,
+    createPhanCong,
+    updatePhanCong,
+    deletePhanCong,
+    getHocSinhLop,
+    createHocSinhLop,
+    updateHocSinhLop,
+    deleteHocSinhLop
+
 };
 
 export default adminService;

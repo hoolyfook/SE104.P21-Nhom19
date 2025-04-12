@@ -35,27 +35,12 @@ module.exports = {
                 updatedAt: new Date(),
             },
             {
-                url: '/admin/giangvien_lop_mons',
+                url: '/admin/giangviens/phancong',
                 createdAt: new Date(),
                 updatedAt: new Date(),
             },
             {
-                url: '/admin/bangdiems',
-                createdAt: new Date(),
-                updatedAt: new Date(),
-            },
-            {
-                url: '/admin/bangdiemhs_lops',
-                createdAt: new Date(),
-                updatedAt: new Date(),
-            },
-            {
-                url: '/admin/bangdiemhs_mons',
-                createdAt: new Date(),
-                updatedAt: new Date(),
-            },
-            {
-                url: '/admin/bangdiemhs_hockys',
+                url: '/admin/lops/hocsinhs',
                 createdAt: new Date(),
                 updatedAt: new Date(),
             },
@@ -127,12 +112,6 @@ module.exports = {
                 updatedAt: new Date(),
             },
             {
-                GroupID: 1, // Reference to student group
-                roleId: 9, // Reference to role ID for student
-                createdAt: new Date(),
-                updatedAt: new Date(),
-            },
-            {
                 GroupID: 2, // Reference to teacher group
                 roleId: 1, // Reference to role ID for teacher
                 createdAt: new Date(),
@@ -178,6 +157,28 @@ module.exports = {
                 email: 'tran.b@example.com',
                 mk: 'password123',
                 groupUserId: 2, // Reference a group from GroupUsers
+                createdAt: new Date(),
+                updatedAt: new Date(),
+            },
+            {
+                hoTen: 'Tran Minh B',
+                gioiTinh: 'Male',
+                ngaySinh: '2004-08-15', // 2004 -> 16 years old in 2020
+                diaChi: 'Ho Chi Minh, Vietnam',
+                email: 'tran.b@example.com',
+                mk: 'password123',
+                groupUserId: 2, // Reference a group from GroupUsers
+                createdAt: new Date(),
+                updatedAt: new Date(),
+            },
+            {
+                hoTen: 'Le Thi C',
+                gioiTinh: 'Female',
+                ngaySinh: '2001-11-25', // 2001 -> 19 years old in 2020
+                diaChi: 'Da Nang, Vietnam',
+                email: 'le.c@example.com',
+                mk: 'password123',
+                groupUserId: 3, // Reference a group from GroupUsers
                 createdAt: new Date(),
                 updatedAt: new Date(),
             },
@@ -250,7 +251,7 @@ module.exports = {
         // Insert BangDiems
         await queryInterface.bulkInsert('BangDiems', [
             {
-                maHS: 3, // Reference a User ID (Student)
+                maHS: 4, // Reference a User ID (Student)
                 maLop: '10A1',
                 maMon: 'Math',
                 hocKy: 'I',
@@ -299,7 +300,7 @@ module.exports = {
         // Insert HocSinh_Lops
         await queryInterface.bulkInsert('HocSinh_Lops', [
             {
-                maHS: 3, // Reference a Student
+                maHS: 4, // Reference a Student
                 maLop: '10A1',
                 createdAt: new Date(),
                 updatedAt: new Date(),
@@ -308,17 +309,16 @@ module.exports = {
     },
 
     down: async (queryInterface, Sequelize) => {
-        // Delete data from tables in reverse order of insertion
-        await queryInterface.bulkDelete('Lops', null, {});
-        await queryInterface.bulkDelete('Roles', null, {});
-        await queryInterface.bulkDelete('GroupUsers', null, {});
-        await queryInterface.bulkDelete('HocSinh_Lops', null, {});
-        await queryInterface.bulkDelete('QuyDinhs', null, {});
-        await queryInterface.bulkDelete('BangDiems', null, {});
-        await queryInterface.bulkDelete('BaoCaoTongKetMons', null, {});
-        await queryInterface.bulkDelete('BaoCaoTongKetHocKys', null, {});
-        await queryInterface.bulkDelete('GiangVien_Lop_Mons', null, {});
-        await queryInterface.bulkDelete('MonHocs', null, {});
-        await queryInterface.bulkDelete('Users', null, {});
+        // Delete data from tables in reverse order of dependencies
+        await queryInterface.bulkDelete('BangDiems', null, {}); // Delete BangDiems first
+        await queryInterface.bulkDelete('HocSinh_Lops', null, {}); // Then HocSinh_Lops
+        await queryInterface.bulkDelete('GiangVien_Lop_Mons', null, {}); // Then GiangVien_Lop_Mons
+        await queryInterface.bulkDelete('GroupRoles', null, {}); // Then GroupRoles
+        await queryInterface.bulkDelete('Lops', null, {}); // Then Lops
+        await queryInterface.bulkDelete('Roles', null, {}); // Then Roles
+        await queryInterface.bulkDelete('Users', null, {}); // Delete Users before GroupUsers
+        await queryInterface.bulkDelete('GroupUsers', null, {}); // Then GroupUsers
+        await queryInterface.bulkDelete('QuyDinhs', null, {}); // Then QuyDinhs
+        await queryInterface.bulkDelete('MonHocs', null, {}); // Then MonHocs
     }
 };

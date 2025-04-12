@@ -4,6 +4,8 @@ import initApiRoutes from "./route/api.js"
 import cookieParser from "cookie-parser"
 import configCORS from "./config/cors.js"
 import configViewEngine from "./config/view.js"
+import setupSwagger from "./config/swagger.js";
+
 import 'dotenv/config';
 let app = express();
 // config CORS for server
@@ -15,8 +17,11 @@ app.use(bodyParser.urlencoded({ extended: true }))
 configViewEngine(app);
 // config cookie parser for server
 app.use(cookieParser())
+// config swagger for server
+setupSwagger(app);
 // config routes for server
 initApiRoutes(app);
+
 
 
 // run server in port 8080

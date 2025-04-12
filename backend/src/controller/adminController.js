@@ -280,7 +280,142 @@ const deleteMonHoc = async (req, res) => {
         })
     }
 }
-
+const getPhanCong = async (req, res) => {
+    try {
+        let data = await adminService.getPhanCong(req.body);
+        return res.status(200).json({
+            EM: data.EM,
+            EC: data.EC,
+            DT: data.DT
+        })
+    } catch (e) {
+        console.log(e)
+        return res.status(500).json({
+            EM: "Error from server",
+            EC: "-1",
+            DT: ""
+        })
+    }
+}
+const createPhanCong = async (req, res) => {
+    try {
+        let data = await adminService.createPhanCong(req.body);
+        return res.status(200).json({
+            EM: data.EM,
+            EC: data.EC,
+            DT: data.DT
+        })
+    } catch (e) {
+        console.log(e)
+        return res.status(500).json({
+            EM: "Error from server",
+            EC: "-1",
+            DT: ""
+        })
+    }
+}
+const updatePhanCong = async (req, res) => {
+    try {
+        let data = await adminService.updatePhanCong(req.body);
+        return res.status(200).json({
+            EM: data.EM,
+            EC: data.EC,
+            DT: data.DT
+        })
+    } catch (e) {
+        console.log(e)
+        return res.status(500).json({
+            EM: "Error from server",
+            EC: "-1",
+            DT: ""
+        })
+    }
+}
+const deletePhanCong = async (req, res) => {
+    try {
+        let data = await adminService.deletePhanCong(req.body.id);
+        return res.status(200).json({
+            EM: data.EM,
+            EC: data.EC,
+            DT: data.DT
+        })
+    } catch (e) {
+        console.log(e)
+        return res.status(500).json({
+            EM: "Error from server",
+            EC: "-1",
+            DT: ""
+        })
+    }
+}
+const getHocSinhLop = async (req, res) => {
+    try {
+        let data = await adminService.getHocSinhLop(req.query);
+        return res.status(200).json({
+            EM: data.EM,
+            EC: data.EC,
+            DT: data.DT
+        })
+    } catch (e) {
+        console.log(e)
+        return res.status(500).json({
+            EM: "Error from server",
+            EC: "-1",
+            DT: ""
+        })
+    }
+}
+const createHocSinhLop = async (req, res) => {
+    try {
+        let data = await adminService.createHocSinhLop(req.body);
+        return res.status(200).json({
+            EM: data.EM,
+            EC: data.EC,
+            DT: data.DT
+        })
+    } catch (e) {
+        console.log(e)
+        return res.status(500).json({
+            EM: "Error from server",
+            EC: "-1",
+            DT: ""
+        })
+    }
+}
+const updateHocSinhLop = async (req, res) => {
+    try {
+        let data = await adminService.updateHocSinhLop(req.body);
+        return res.status(200).json({
+            EM: data.EM,
+            EC: data.EC,
+            DT: data.DT
+        })
+    } catch (e) {
+        console.log(e)
+        return res.status(500).json({
+            EM: "Error from server",
+            EC: "-1",
+            DT: ""
+        })
+    }
+}
+const deleteHocSinhLop = async (req, res) => {
+    try {
+        let data = await adminService.deleteHocSinhLop(req.body.id);
+        return res.status(200).json({
+            EM: data.EM,
+            EC: data.EC,
+            DT: data.DT
+        })
+    } catch (e) {
+        console.log(e)
+        return res.status(500).json({
+            EM: "Error from server",
+            EC: "-1",
+            DT: ""
+        })
+    }
+}
 const adminController = {
     getUsers,
     createUser,
@@ -297,6 +432,15 @@ const adminController = {
     getMonHocs,
     createMonHoc,
     updateMonHoc,
-    deleteMonHoc
+    deleteMonHoc,
+    getPhanCong,
+    createPhanCong,
+    updatePhanCong,
+    deletePhanCong,
+    getHocSinhLop,
+    createHocSinhLop,
+    updateHocSinhLop,
+    deleteHocSinhLop
+
 }
 export default adminController;
