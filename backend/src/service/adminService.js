@@ -44,11 +44,51 @@ const createUser = async (data) => {
                 DT: [],
             }
         }
+
         let groupUserId = await db.GroupUsers.findOne({
             where: { name: data.GroupUsers },
             attributes: ['id']
         });
+
         if (groupUserId !== null) {
+            // Check if GroupUsers is "student"
+            if (data.GroupUsers === "student") {
+                // Calculate age
+                const currentYear = new Date().getFullYear();
+                const birthYear = new Date(data.ngaySinh).getFullYear();
+                const age = currentYear - birthYear;
+
+                // Fetch age limits from QuyDinhs
+                const minAgeRule = await db.QuyDinhs.findOne({
+                    where: { moTa: "Tuổi tối thiểu học sinh" },
+                    attributes: ['giaTri']
+                });
+                const maxAgeRule = await db.QuyDinhs.findOne({
+                    where: { moTa: "Tuổi tối đa học sinh" },
+                    attributes: ['giaTri']
+                });
+
+                if (!minAgeRule || !maxAgeRule) {
+                    return {
+                        EM: "Age rules not found",
+                        EC: "-1",
+                        DT: [],
+                    }
+                }
+
+                const minAge = parseInt(minAgeRule.giaTri);
+                const maxAge = parseInt(maxAgeRule.giaTri);
+
+                // Validate age
+                if (age < minAge || age > maxAge) {
+                    return {
+                        EM: `Student age must be between ${minAge} and ${maxAge}`,
+                        EC: "-1",
+                        DT: [],
+                    }
+                }
+            }
+
             let user = await db.Users.create({
                 hoTen: data.hoTen,
                 gioiTinh: data.gioiTinh,
@@ -64,8 +104,7 @@ const createUser = async (data) => {
                 EC: "0",
                 DT: [],
             }
-        }
-        else {
+        } else {
             return {
                 EM: "GroupUser not found",
                 EC: "-1",
@@ -84,22 +123,63 @@ const createUser = async (data) => {
 const updateUser = async (data) => {
     try {
         let user = await db.Users.findOne({
-            where: { email: data.email },
-            attributes: ['email']
+            where: { id: data.id },
+            attributes: ['id', 'email', 'ngaySinh']
         });
-        if (user !== null) {
+        if (!user) {
             return {
-                EM: "Email already exists",
+                EM: "User not found",
                 EC: "-1",
                 DT: [],
             }
         }
+
         let groupUserId = await db.GroupUsers.findOne({
             where: { name: data.GroupUsers },
             attributes: ['id']
         });
+
         if (groupUserId !== null) {
-            let user = await db.Users.update({
+            // Check if GroupUsers is "student"
+            if (data.GroupUsers === "student") {
+                // Calculate age
+                const currentYear = new Date().getFullYear();
+                const birthYear = new Date(data.ngaySinh).getFullYear();
+                const age = currentYear - birthYear;
+
+                // Fetch age limits from QuyDinhs
+                const minAgeRule = await db.QuyDinhs.findOne({
+                    where: { moTa: "Tuổi tối thiểu học sinh" },
+                    attributes: ['giaTri']
+                });
+                const maxAgeRule = await db.QuyDinhs.findOne({
+                    where: { moTa: "Tuổi tối đa học sinh" },
+                    attributes: ['giaTri']
+                });
+
+                if (!minAgeRule || !maxAgeRule) {
+                    return {
+                        EM: "Age rules not found",
+                        EC: "-1",
+                        DT: [],
+                    }
+                }
+
+                const minAge = parseInt(minAgeRule.giaTri);
+                const maxAge = parseInt(maxAgeRule.giaTri);
+
+                // Validate age
+                if (age < minAge || age > maxAge) {
+                    return {
+                        EM: `Student age must be between ${minAge} and ${maxAge}`,
+                        EC: "-1",
+                        DT: [],
+                    }
+                }
+            }
+
+            // Update user
+            await db.Users.update({
                 hoTen: data.hoTen,
                 gioiTinh: data.gioiTinh,
                 ngaySinh: data.ngaySinh,
@@ -110,14 +190,21 @@ const updateUser = async (data) => {
             }, {
                 where: { id: data.id }
             });
+
             return {
                 EM: "Update User success",
                 EC: "0",
                 DT: [],
             }
+        } else {
+            return {
+                EM: "GroupUser not found",
+                EC: "-1",
+                DT: [],
+            }
         }
     } catch (e) {
-        console.log(e)
+        console.log(e);
         return {
             EM: "Error from server",
             EC: "-1",
@@ -125,8 +212,15 @@ const updateUser = async (data) => {
         }
     }
 }
-const deleteUser = async (id) => {
+const deleteUser = async (myid, id) => {
     try {
+        if (myid === id) {
+            return {
+                EM: "Cannot delete yourself",
+                EC: "-1",
+                DT: [],
+            }
+        }
         let user = await db.Users.destroy({
             where: { id }
         });
@@ -358,6 +452,7 @@ const getMonHocs = async () => {
 }
 const createMonHoc = async (data) => {
     try {
+        // Check if the subject already exists
         let monhoc = await db.MonHocs.findOne({
             where: { maMon: data.maMon }
         });
@@ -366,26 +461,56 @@ const createMonHoc = async (data) => {
                 EM: "MonHoc already exists",
                 EC: "-1",
                 DT: [],
-            }
+            };
         }
+
+        // Fetch the maximum number of subjects allowed from QuyDinhs
+        let maxSubjectsRule = await db.QuyDinhs.findOne({
+            where: { moTa: "Số môn học tối đa" },
+            attributes: ['giaTri']
+        });
+
+        if (!maxSubjectsRule) {
+            return {
+                EM: "Maximum subjects rule not found",
+                EC: "-1",
+                DT: [],
+            };
+        }
+
+        const maxSubjects = parseInt(maxSubjectsRule.giaTri);
+
+        // Count the current number of subjects
+        let currentSubjectsCount = await db.MonHocs.count();
+
+        if (currentSubjectsCount >= maxSubjects) {
+            return {
+                EM: `Cannot create more subjects. Maximum allowed is ${maxSubjects}`,
+                EC: "-1",
+                DT: [],
+            };
+        }
+
+        // Create the new subject
         await db.MonHocs.create({
             maMon: data.maMon,
             tenMon: data.tenMon
         });
+
         return {
             EM: "Create MonHoc success",
             EC: "0",
             DT: [],
-        }
+        };
     } catch (e) {
-        console.log(e)
+        console.log(e);
         return {
             EM: "Error from server",
             EC: "-1",
             DT: [],
-        }
+        };
     }
-}
+};
 const updateMonHoc = async (data) => {
     try {
         let monhoc = await db.MonHocs.findOne({
@@ -842,6 +967,150 @@ const deleteHocSinhLop = async (id) => {
         }
     }
 }
+const getBaoCaoKy = async (query) => {
+    try {
+        // Fetch all scores for the class and semester
+        let bangdiem = await db.BangDiems.findAll({
+            where: { maLop: query.maLop, hocKy: query.hocKy },
+            attributes: ['maHS', 'diemTB', 'maMon'],
+        });
+
+        if (bangdiem.length === 0) {
+            return {
+                EM: "No scores found for the class and semester",
+                EC: "-1",
+                DT: [],
+            };
+        }
+
+        // Fetch the passing score
+        let diemdau = await db.QuyDinhs.findOne({
+            where: { moTa: "Điểm đạt môn" },
+            attributes: ['giaTri'],
+        });
+
+        if (!diemdau) {
+            return {
+                EM: "Passing score rule not found",
+                EC: "-1",
+                DT: [],
+            };
+        }
+
+        const passingScore = parseFloat(diemdau.giaTri);
+
+        // Group scores by student
+        let studentScores = {};
+        bangdiem.forEach((bd) => {
+            if (!studentScores[bd.maHS]) {
+                studentScores[bd.maHS] = [];
+            }
+            studentScores[bd.maHS].push(bd.diemTB);
+        });
+
+        // Calculate average score for each student and count the number of students who passed
+        let passedStudents = 0;
+        for (let maHS in studentScores) {
+            const scores = studentScores[maHS];
+            const totalScore = scores.reduce((sum, score) => sum + (score || 0), 0);
+            const averageScore = totalScore / scores.length;
+
+            if (averageScore >= passingScore) {
+                passedStudents++;
+            }
+        }
+
+        // Fetch the class size
+        let Lop = await db.Lops.findOne({
+            where: { maLop: query.maLop },
+            attributes: ['siSo'],
+        });
+
+        if (!Lop) {
+            return {
+                EM: "Class not found",
+                EC: "-1",
+                DT: [],
+            };
+        }
+
+        const classSize = Lop.siSo;
+
+        // Calculate the pass rate
+        const passRate = (passedStudents / classSize) * 100;
+
+        // Check if a record already exists in BaoCaoTongKetHocKys
+        let existingReport = await db.BaoCaoTongKetHocKys.findOne({
+            where: {
+                maLop: query.maLop,
+                hocKy: query.hocKy,
+            },
+        });
+
+        if (existingReport) {
+            // Update the existing record
+            await db.BaoCaoTongKetHocKys.update(
+                {
+                    siSo: classSize,
+                    soLuongDat: passedStudents,
+                    tiLe: passRate,
+                },
+                {
+                    where: {
+                        maLop: query.maLop,
+                        hocKy: query.hocKy,
+                    },
+                }
+            );
+        } else {
+            // Create a new record
+            await db.BaoCaoTongKetHocKys.create({
+                maLop: query.maLop,
+                hocKy: query.hocKy,
+                siSo: classSize,
+                soLuongDat: passedStudents,
+                tiLe: passRate,
+            });
+        }
+
+        return {
+            EM: "Get bao cao ky success",
+            EC: "0",
+            DT: {
+                passedStudents,
+                classSize,
+                passRate,
+            },
+        };
+    } catch (e) {
+        console.log(e);
+        return {
+            EM: "Error from server",
+            EC: "-1",
+            DT: [],
+        };
+    }
+};
+const deleteBaoCaoKy = async (data) => {
+    try {
+        // Check if the report exists
+        let bangdiem = await db.BaoCaoTongKetHocKys.destroy({
+            where: { maLop: data.maLop, hocKy: data.hocKy }
+        });
+        return {
+            EM: "Delete BaoCaoKy success",
+            EC: "0",
+            DT: bangdiem,
+        }
+    } catch (e) {
+        console.log(e)
+        return {
+            EM: "Error from server",
+            EC: "-1",
+            DT: [],
+        }
+    }
+}
 const adminService = {
     getUsers,
     createUser,
@@ -866,7 +1135,9 @@ const adminService = {
     getHocSinhLop,
     createHocSinhLop,
     updateHocSinhLop,
-    deleteHocSinhLop
+    deleteHocSinhLop,
+    getBaoCaoKy,
+    deleteBaoCaoKy,
 
 };
 

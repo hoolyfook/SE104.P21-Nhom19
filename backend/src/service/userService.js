@@ -9,7 +9,7 @@ const getGroupRoles = async (email, password) => {  // get roles to create JWT
                 email: email,
                 mk: password
             },
-            attributes: ['groupUserId']
+            attributes: ['groupUserId', 'id']
         });
         if (user) {
             user = user.get({ plain: true });
@@ -23,6 +23,7 @@ const getGroupRoles = async (email, password) => {  // get roles to create JWT
                 }
             });
             let payload = {
+                id: user.id,
                 email: email,
                 data: roles,
                 expiresIn: process.env.JWT_EX

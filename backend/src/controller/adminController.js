@@ -56,7 +56,7 @@ const updateUser = async (req, res) => {
 }
 const deleteUser = async (req, res) => {
     try {
-        let data = await adminService.deleteUser(req.body.id);
+        let data = await adminService.deleteUser(req.jwt.id, req.body.id);
         return res.status(200).json({
             EM: data.EM,
             EC: data.EC,
@@ -416,6 +416,40 @@ const deleteHocSinhLop = async (req, res) => {
         })
     }
 }
+const getBaoCaoKy = async (req, res) => {
+    try {
+        let data = await adminService.getBaoCaoKy(req.query);
+        return res.status(200).json({
+            EM: data.EM,
+            EC: data.EC,
+            DT: data.DT
+        })
+    } catch (e) {
+        console.log(e)
+        return res.status(500).json({
+            EM: "Error from server",
+            EC: "-1",
+            DT: ""
+        })
+    }
+}
+const deleteBaoCaoKy = async (req, res) => {
+    try {
+        let data = await adminService.deleteBaoCaoKy(req.body);
+        return res.status(200).json({
+            EM: data.EM,
+            EC: data.EC,
+            DT: data.DT
+        })
+    } catch (e) {
+        console.log(e)
+        return res.status(500).json({
+            EM: "Error from server",
+            EC: "-1",
+            DT: ""
+        })
+    }
+}
 const adminController = {
     getUsers,
     createUser,
@@ -440,7 +474,9 @@ const adminController = {
     getHocSinhLop,
     createHocSinhLop,
     updateHocSinhLop,
-    deleteHocSinhLop
+    deleteHocSinhLop,
+    getBaoCaoKy,
+    deleteBaoCaoKy
 
 }
 export default adminController;

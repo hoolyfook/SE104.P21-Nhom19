@@ -44,6 +44,32 @@ module.exports = {
                 createdAt: new Date(),
                 updatedAt: new Date(),
             },
+            {
+                url: '/giangvien/phancong',
+                createdAt: new Date(),
+                updatedAt: new Date(),
+            },
+            {
+                url: '/giangvien/bangdiem',
+                createdAt: new Date(),
+                updatedAt: new Date(),
+            },
+            {
+                url: '/giangvien/baocao/mon',
+                createdAt: new Date(),
+                updatedAt: new Date(),
+            },
+            {
+                url: '/admin/baocao/lop',
+                createdAt: new Date(),
+                updatedAt: new Date(),
+            },
+            {
+                url: '/hocsinh/bangdiem',
+                createdAt: new Date(),
+                updatedAt: new Date(),
+            },
+
         ]);
         await queryInterface.bulkInsert('GroupUsers', [
             {
@@ -124,6 +150,30 @@ module.exports = {
                 updatedAt: new Date(),
             },
             {
+                GroupID: 2, // Reference to teacher group
+                roleId: 9, // Reference to role ID for teacher
+                createdAt: new Date(),
+                updatedAt: new Date(),
+            },
+            {
+                GroupID: 2, // Reference to teacher group
+                roleId: 10, // Reference to role ID for teacher
+                createdAt: new Date(),
+                updatedAt: new Date(),
+            },
+            {
+                GroupID: 2, // Reference to teacher group
+                roleId: 11, // Reference to role ID for teacher
+                createdAt: new Date(),
+                updatedAt: new Date(),
+            },
+            {
+                GroupID: 1, // Reference to teacher group
+                roleId: 12, // Reference to role ID for teacher
+                createdAt: new Date(),
+                updatedAt: new Date(),
+            },
+            {
                 GroupID: 3, // Reference to student group
                 roleId: 1, // Reference to role ID for student
                 createdAt: new Date(),
@@ -132,6 +182,12 @@ module.exports = {
             {
                 GroupID: 3, // Reference to student group
                 roleId: 2, // Reference to role ID for student
+                createdAt: new Date(),
+                updatedAt: new Date(),
+            },
+            {
+                GroupID: 3, // Reference to student group
+                roleId: 13, // Reference to role ID for student
                 createdAt: new Date(),
                 updatedAt: new Date(),
             },
@@ -154,18 +210,18 @@ module.exports = {
                 gioiTinh: 'Male',
                 ngaySinh: '2004-08-15', // 2004 -> 16 years old in 2020
                 diaChi: 'Ho Chi Minh, Vietnam',
-                email: 'tran.b@example.com',
+                email: 'tran.b1@example.com',
                 mk: 'password123',
                 groupUserId: 2, // Reference a group from GroupUsers
                 createdAt: new Date(),
                 updatedAt: new Date(),
             },
             {
-                hoTen: 'Tran Minh B',
+                hoTen: 'Tran Van B',
                 gioiTinh: 'Male',
                 ngaySinh: '2004-08-15', // 2004 -> 16 years old in 2020
                 diaChi: 'Ho Chi Minh, Vietnam',
-                email: 'tran.b@example.com',
+                email: 'tran.b2@example.com',
                 mk: 'password123',
                 groupUserId: 2, // Reference a group from GroupUsers
                 createdAt: new Date(),
@@ -176,18 +232,18 @@ module.exports = {
                 gioiTinh: 'Female',
                 ngaySinh: '2001-11-25', // 2001 -> 19 years old in 2020
                 diaChi: 'Da Nang, Vietnam',
-                email: 'le.c@example.com',
+                email: 'le.c1@example.com',
                 mk: 'password123',
                 groupUserId: 3, // Reference a group from GroupUsers
                 createdAt: new Date(),
                 updatedAt: new Date(),
             },
             {
-                hoTen: 'Le Thi C',
+                hoTen: 'Le Van C',
                 gioiTinh: 'Female',
                 ngaySinh: '2001-11-25', // 2001 -> 19 years old in 2020
                 diaChi: 'Da Nang, Vietnam',
-                email: 'le.c@example.com',
+                email: 'le.c2@example.com',
                 mk: 'password123',
                 groupUserId: 3, // Reference a group from GroupUsers
                 createdAt: new Date(),
@@ -200,7 +256,7 @@ module.exports = {
                 maLop: '10A1',
                 tenLop: 'Class 10A1',
                 khoiLop: '10',
-                siSo: 0, // Within the limit of 40 students per class (QĐ2)
+                siSo: 1, // Within the limit of 40 students per class (QĐ2)
                 createdAt: new Date(),
                 updatedAt: new Date(),
             },
@@ -208,7 +264,7 @@ module.exports = {
                 maLop: '11A1',
                 tenLop: 'Class 11A1',
                 khoiLop: '11',
-                siSo: 0, // Within the limit of 40 students per class (QĐ2)
+                siSo: 1, // Within the limit of 40 students per class (QĐ2)
                 createdAt: new Date(),
                 updatedAt: new Date(),
             },
@@ -242,6 +298,20 @@ module.exports = {
             {
                 maGV: 2, // Reference another User ID (Teacher)
                 maLop: '11A1',
+                maMon: 'Math',
+                createdAt: new Date(),
+                updatedAt: new Date(),
+            },
+            {
+                maGV: 3, // Reference a User ID (Teacher)
+                maLop: '11A1',
+                maMon: 'Physics',
+                createdAt: new Date(),
+                updatedAt: new Date(),
+            },
+            {
+                maGV: 3, // Reference a User ID (Teacher)
+                maLop: '10A1',
                 maMon: 'Physics',
                 createdAt: new Date(),
                 updatedAt: new Date(),
@@ -257,7 +327,7 @@ module.exports = {
                 hocKy: 'I',
                 diem15p: 8.5,
                 diem1Tiet: 7.0,
-                diemTB: 7.75, // Average score
+                diemTB: 7.5, // Average score
                 createdAt: new Date(),
                 updatedAt: new Date(),
             },
@@ -302,6 +372,12 @@ module.exports = {
             {
                 maHS: 4, // Reference a Student
                 maLop: '10A1',
+                createdAt: new Date(),
+                updatedAt: new Date(),
+            },
+            {
+                maHS: 5, // Reference a Student
+                maLop: '11A1',
                 createdAt: new Date(),
                 updatedAt: new Date(),
             },
