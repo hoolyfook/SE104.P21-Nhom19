@@ -36,7 +36,7 @@ export default function LoginForm() {
       <Card className="w-full max-w-sm p-6 shadow-lg bg-white">
         {/* 🖼️ Logo */}
         <div className="flex justify-center">
-          <img src="https://cryptologos.cc/logos/pepe-pepe-logo.png" alt="Logo" className="w-32 h-32" />
+          <img src="https://image-cdn.solana.fm/images/?imageUrl=https://pbs.twimg.com/profile_images/1830748895015501824/99XU7XKo_400x400.jpg" alt="Logo" className="w-32 h-32" />
         </div>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">

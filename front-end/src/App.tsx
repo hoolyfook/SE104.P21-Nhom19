@@ -7,6 +7,7 @@ import ClassList from "./pages/ClassList";
 import Profile from "./pages/Profile";
 import StudyResults from "./pages/StudentResult"
 import GradeReport from "./pages/GradeReport"
+import BaoCaoTongKetHocKi from "./pages/TongKetHocKi";
 
 function Layout() {
   const location = useLocation();
@@ -22,6 +23,7 @@ function Layout() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/studyresult" element={<StudyResults />} />
         <Route path="/gradereport" element={<GradeReport />} />
+        <Route path="/tongkethocki" element={<BaoCaoTongKetHocKi />} />
       </Routes>
       {!hideNavbar && <Footer />}
     </>

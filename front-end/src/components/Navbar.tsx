@@ -27,13 +27,13 @@ export default function Navbar() {
   return (
     <nav className="bg-gray-700 text-white p-4 flex justify-between items-center">
         <div className="flex items-center space-x-4">
-        <img src="https://cryptologos.cc/logos/pepe-pepe-logo.png" alt="header_logo" className="w-20 h-20" />
+        <img src="https://image-cdn.solana.fm/images/?imageUrl=https://pbs.twimg.com/profile_images/1830748895015501824/99XU7XKo_400x400.jpg" alt="header_logo" className="w-20 h-20" />
         <div className="flex space-x-4">
             <Link to="/dashboard" className="text-[20px] font-bold px-4 py-2 hover:bg-gray-300 hover:text-black rounded">Danh sách học sinh</Link>
             <Link to="/results" className="text-[20px] font-bold px-4 py-2 hover:bg-gray-300 hover:text-black rounded">Danh sách lớp</Link>
             <Link to="/studyresult" className="text-[20px] font-bold px-4 py-2 hover:bg-gray-300 hover:text-black rounded">Kết quả học tập</Link>
             <Link to="/gradereport" className="text-[20px] font-bold px-4 py-2 hover:bg-gray-300 hover:text-black rounded">Kết quả môn</Link>
-            <Link to="/profile" className="text-[20px] font-bold px-4 py-2 hover:bg-gray-300 hover:text-black rounded">Hồ sơ cá nhân</Link>
+            <Link to="/tongkethocki" className="text-[20px] font-bold px-4 py-2 hover:bg-gray-300 hover:text-black rounded">Báo cáo học kì</Link>
         </div>
         </div>
         {user ? (
