@@ -6,15 +6,8 @@ GV: Đỗ Thị Thanh Tuyền
 - Lê Thanh Lâm - 21521025
 - Nguyễn Văn Long - 21521097
 
-docker run \
-    -e ALLOW_EMPTY_PASSWORD=yes \
-    -v /database:/bitnami/mysql/data \
-    bitnami/mysql:latest
+## HOW TO RUN THIS PROJECT
+```
+docker-compose down && docker-compose up -d --build
+```
 
-
-docker-compose down && docker-compose up -d
-
-npx sequelize-cli db:drop
-npx sequelize-cli db:create
-npx sequelize-cli db:migrate
-npx sequelize-cli db:seed:all
