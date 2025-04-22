@@ -7,9 +7,6 @@
     "build": "babel src -d build --copy-files",
     "start": "nodemon --exec babel-node src/index.js"
   },
-  "author": "",
-  "license": "ISC",
-  "description": "",
   "dependencies": {
     "@babel/node": "^7.26.0",
     "body-parser": "^1.20.3",

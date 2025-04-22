@@ -3,7 +3,8 @@ import 'dotenv/config';
 //config CORS
 const configCORS = (app) => {
     const corsOptions = {
-        origin: process.env.REACT_URL,
+        // origin: process.env.REACT_URL,
+        origin: "*",
         credentials: true,            //access-control-allow-credentials:true
         optionSuccessStatus: 200
     }

@@ -5,24 +5,22 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { ChevronLeft, ChevronRight, Trash } from "lucide-react";
+import axios from "axios";
 
 const fetchStudents = async () => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      const students = [];
-      for (let i = 1; i <= 1000; i++) {
-        students.push({
-          id: i,
-          name: `Học Sinh ${i}`,
-          gender: i % 2 === 0 ? "Nam" : "Nữ",
-          dob: `200${i % 10}-0${(i % 9) + 1}-15`,
-          address: `Địa chỉ ${i}`,
-          email: `student${i}@gmail.com`,
-        });
-      }
-      resolve(students);
-    }, 1000);
-  });
+  console.log("Fetching students...");
+  try {
+    const response = await axios.get('http://localhost:8080/api/v1/admin/users', {
+      withCredentials: true, // Đảm bảo cookie được gửi kèm theo request
+    });
+    return response.data.DT;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.error('Error fetching users:', error.response?.data || error.message);
+    } else {
+      console.error('Error fetching users:', error);
+    }
+  }
 };
 
 const deleteStudent = async (id: any) => {
@@ -55,7 +53,7 @@ export default function Dashboard() {
   return (
     <Card className="p-4 max-w-5xl mx-auto mt-10">
       <CardContent>
-        <h2 className="text-xl font-semibold mb-4">Quản lý học sinh</h2>
+        <h2 className="text-xl font-semibold mb-4">Quản lý người dùng</h2>
         <Input
           placeholder="Tìm kiếm theo tên, email, địa chỉ..."
           className="mb-4"
@@ -65,7 +63,7 @@ export default function Dashboard() {
             setCurrentPage(1);
           }}
         />
-        <Button className="mt-4 w-full">Thêm học sinh</Button>
+        <Button className="mt-4 w-full">Thêm người dùng</Button>
         <Table>
           <TableHeader>
             <TableRow>
@@ -75,6 +73,7 @@ export default function Dashboard() {
               <TableHead>Ngày Sinh</TableHead>
               <TableHead>Địa Chỉ</TableHead>
               <TableHead>Email</TableHead>
+              <TableHead>Vai Trò</TableHead>
               <TableHead></TableHead>
             </TableRow>
           </TableHeader>
@@ -83,11 +82,20 @@ export default function Dashboard() {
               paginatedStudents.map((student) => (
                 <TableRow key={student.id}>
                   <TableCell>{student.id}</TableCell>
-                  <TableCell>{student.name}</TableCell>
-                  <TableCell>{student.gender}</TableCell>
-                  <TableCell>{student.dob}</TableCell>
-                  <TableCell>{student.address}</TableCell>
+                  <TableCell>{student.hoTen}</TableCell>
+                  <TableCell>{student.gioiTinh === 'Male' ? 'Nam' : 'Nữ'}</TableCell>
+                  <TableCell>
+                    {new Date(student.ngaySinh).toLocaleDateString('vi-VN')}
+                  </TableCell>
+                  <TableCell>{student.diaChi}</TableCell>
                   <TableCell>{student.email}</TableCell>
+                  <TableCell>
+                    {student.GroupUsers.name === "teacher"
+                      ? "Giáo Viên"
+                      : student.GroupUsers.name === "student"
+                      ? "Học Sinh"
+                      : "admin"}
+                  </TableCell>
                   <TableCell>
                     <Button variant="destructive" size="icon" onClick={() => deleteStudent(student.id)}>
                       <Trash className="h-4 w-4" />

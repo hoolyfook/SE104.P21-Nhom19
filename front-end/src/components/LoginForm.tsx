@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent} from "@/components/ui/card";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom"; // 🔥 Import useNavigate
+import axios from "axios";
 
 const loginSchema = z.object({
   email: z.string().email("Email không hợp lệ"),
@@ -24,13 +25,24 @@ export default function LoginForm() {
   const onSubmit = (data: any) => {
     setLoading(true);
     console.log("Đăng nhập với:", data);
-
+    try {
+      axios.post("http://localhost:8080/api/v1/users/login", data, {
+        withCredentials: true, // Bật `withCredentials` để gửi và nhận cookie
+      })
+      .then((response) => {
+        console.log('Login response:', response.data); // Kiểm tra cookie
+      })
+      .catch((error) => {
+        console.error('Login failed:', error.response?.data || error.message);
+      });
+    } catch (error) {
+      console.error('Error:', error);
+    }
     setTimeout(() => {
       setLoading(false);
       navigate("/dashboard");
     }, 10);
   };
-
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
       <Card className="w-full max-w-sm p-6 shadow-lg bg-white">

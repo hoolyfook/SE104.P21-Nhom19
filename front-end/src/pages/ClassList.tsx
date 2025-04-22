@@ -1,41 +1,69 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { Download } from "lucide-react";
+import axiosClient from '../api/axiosClient'; // Axios client instance
+import axios from 'axios'; // Axios for error handling
 
-// 🟢 Giả lập API dữ liệu lớp học (12 lớp, mỗi lớp 40 học sinh)
-const generateClasses = () => {
-  const classes = [];
-  for (let i = 1; i <= 12; i++) {
-    const students = [];
-    for (let j = 1; j <= 40; j++) {
-      students.push({
-        id: j,
-        name: `Học Sinh ${j}`,
-        gender: j % 2 === 0 ? "Nam" : "Nữ",
-        dob: `201${j % 10}-0${(j % 9) + 1}-15`,
-        address: `Địa chỉ ${j}`,
-        // email: `student${j}@gmail.com`,
-      });
-    }
-    classes.push({ id: i, name: `Lớp ${i}`, students });
-  }
-  return classes;
+// 🟢 Fetch class list
+const fetchClassList = () => {
+  return axiosClient
+    .get('/admin/lops') // Fetch list of classes
+    .then((response) => {
+      const classList = response.data.DT;
+      console.log("List of classes:", classList); // Logging the class list
+      return classList;
+    })
+    .catch((error) => {
+      if (axios.isAxiosError(error)) {
+        console.error('Error fetching class list:', error.response?.data || error.message);
+      } else {
+        console.error('Unexpected error:', error);
+      }
+      return []; // Fallback value
+    });
 };
 
-const classData = generateClasses();
+// 🟢 Fetch students in a class using maLop parameter
+const fetchStudentsInClass = (maLop: any) => {
+  return axiosClient
+    .get(`/admin/lops/hocsinhs?maLop=${maLop}`) // Fetch students using maLop as query parameter
+    .then((response) => {
+      const students = response.data.DT; // Assuming the students list is under the 'DT' key
+      console.log(`List of students for class ${maLop}:`, students);
+      return students;
+    })
+    .catch((error) => {
+      if (axios.isAxiosError(error)) {
+        console.error(`Error fetching students for class ${maLop}:`, error.response?.data || error.message);
+      } else {
+        console.error('Unexpected error:', error);
+      }
+      return []; // Fallback value
+    });
+};
 
 export default function ClassList() {
   const [selectedClass, setSelectedClass] = useState<string | null>(null);
   const [students, setStudents] = useState<any[]>([]);
+  const [classList, setClassList] = useState<any[]>([]);
 
-  // 🟢 Chọn lớp và hiển thị danh sách học sinh
+  // 🟢 Fetch class list when component mounts
+  useEffect(() => {
+    fetchClassList().then((data) => {
+      setClassList(data);
+    });
+  }, []);
+
+  // 🟢 Lấy danh sách học sinh trong lớp khi lớp được chọn
   const handleShowClass = () => {
     if (selectedClass) {
-      const classInfo = classData.find((cls) => cls.id.toString() === selectedClass);
-      setStudents(classInfo ? classInfo.students : []);
+      // Fetch students for the selected class
+      fetchStudentsInClass(selectedClass).then((data) => {
+        setStudents(data); // Update students state
+      });
     }
   };
 
@@ -67,9 +95,9 @@ export default function ClassList() {
               <SelectValue placeholder="Chọn lớp" />
             </SelectTrigger>
             <SelectContent>
-              {classData.map((cls) => (
-                <SelectItem key={cls.id} value={cls.id.toString()}>
-                  {cls.name}
+              {classList.map((cls) => (
+                <SelectItem key={cls.maLop} value={cls.maLop}>
+                  {cls.tenLop} {/* Display class name */}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -83,23 +111,21 @@ export default function ClassList() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>ID</TableHead>
+                  <TableHead>STT</TableHead>
                   <TableHead>Họ Tên</TableHead>
                   <TableHead>Giới Tính</TableHead>
                   <TableHead>Ngày Sinh</TableHead>
                   <TableHead>Địa Chỉ</TableHead>
-                  {/* <TableHead>Email</TableHead> */}
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {students.map((student) => (
                   <TableRow key={student.id}>
-                    <TableCell>{student.id}</TableCell>
-                    <TableCell>{student.name}</TableCell>
+                    <TableCell>STT</TableCell>
+                    <TableCell>{student.Users.hoTen}</TableCell>
                     <TableCell>{student.gender}</TableCell>
                     <TableCell>{student.dob}</TableCell>
                     <TableCell>{student.address}</TableCell>
-                    {/* <TableCell>{student.email}</TableCell> */}
                   </TableRow>
                 ))}
               </TableBody>

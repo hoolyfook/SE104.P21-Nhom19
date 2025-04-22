@@ -1,0 +1,14 @@
+# Sử dụng Node.js image
+FROM node:23.11
+
+# Tạo thư mục làm việc trong container
+WORKDIR /app
+
+# Copy toàn bộ code vào container
+COPY . .
+
+# Cổng mà ứng dụng sẽ chạy (nhớ match với trong code)
+EXPOSE 8080
+
+# Lệnh chạy ứng dụng
+CMD ["npm start"]
