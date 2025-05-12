@@ -784,7 +784,7 @@ const getHocSinhLop = async (data) => {
                 {
                     model: db.Users,
                     as: 'Users',
-                    attributes: ['hoTen']
+                    attributes: ['hoTen', 'gioiTinh', 'ngaySinh', 'diaChi', 'email'],
                 }
             ]
         });

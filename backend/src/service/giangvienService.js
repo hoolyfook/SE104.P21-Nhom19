@@ -31,8 +31,18 @@ const getPhanCong = async (maGV) => {
         }
     }
 }
-const getBangDiem = async (query) => {
+const getBangDiem = async (id, query) => {
     try {
+        let phancong = await db.GiangVien_Lop_Mons.findOne({
+            where: { maGV: id, maLop: query.maLop, maMon: query.maMon },
+        });
+        if (!phancong) {
+            return {
+                EM: "Don't have permission",
+                EC: "-1",
+                DT: [],
+            }
+        }
         let bangdiem = await db.BangDiems.findAll({
             where: { maLop: query.maLop, maMon: query.maMon },
             attributes: ['id', 'maHS', 'diem15p', 'diem1Tiet', 'diemTB'],
@@ -339,7 +349,200 @@ const deleteBaoCaoMon = async (id, data) => {
         }
     }
 }
+const getLops = async (id) => {
+    try {
+        let lops = await db.Lops.findAll({
+            where: { chuNhiem: id },
+            attributes: ['maLop', 'tenLop'],
+        });
+        return {
+            EM: "Get Lop success",
+            EC: "0",
+            DT: lops,
+        }
+    } catch (e) {
+        console.log(e)
+        return {
+            EM: "Error from server",
+            EC: "-1",
+            DT: [],
+        }
+    }
+}
+const getHocSinhLop = async (id, query) => {
+    try {
+        let lops = await db.Lops.findAll({
+            where: { chuNhiem: id, maLop: query.maLop },
+        });
+        if (lops.length === 0) {
+            return {
+                EM: "Don't have permission",
+                EC: "-1",
+                DT: [],
+            }
+        }
+        let hocsinh = await db.HocSinh_Lops.findAll({
+            where: { maLop: query.maLop },
+            attributes: ['maHS'],
+            include: [
+                {
+                    model: db.Users,
+                    as: 'Users',
+                    attributes: ['hoTen']
+                },
+            ]
+        });
+        return {
+            EM: "Get HocSinh success",
+            EC: "0",
+            DT: hocsinh,
+        }
+    } catch (e) {
+        console.log(e)
+        return {
+            EM: "Error from server",
+            EC: "-1",
+            DT: [],
+        }
+    }
+}
 
+const getBaoCaoKy = async (id, query) => {
+    try {
+
+        let lops = await db.Lops.findAll({
+            where: { chuNhiem: id, maLop: query.maLop },
+        });
+        if (lops.length === 0) {
+            return {
+                EM: "Don't have permission",
+                EC: "-1",
+                DT: [],
+            }
+        }
+
+        // Fetch all scores for the class and semester
+        let bangdiem = await db.BangDiems.findAll({
+            where: { maLop: query.maLop, hocKy: query.hocKy },
+            attributes: ['maHS', 'diemTB', 'maMon'],
+        });
+
+        if (bangdiem.length === 0) {
+            return {
+                EM: "No scores found for the class and semester",
+                EC: "-1",
+                DT: [],
+            };
+        }
+
+        // Fetch the passing score
+        let diemdau = await db.QuyDinhs.findOne({
+            where: { moTa: "Điểm đạt môn" },
+            attributes: ['giaTri'],
+        });
+
+        if (!diemdau) {
+            return {
+                EM: "Passing score rule not found",
+                EC: "-1",
+                DT: [],
+            };
+        }
+
+        const passingScore = parseFloat(diemdau.giaTri);
+
+        // Group scores by student
+        let studentScores = {};
+        bangdiem.forEach((bd) => {
+            if (!studentScores[bd.maHS]) {
+                studentScores[bd.maHS] = [];
+            }
+            studentScores[bd.maHS].push(bd.diemTB);
+        });
+
+        // Calculate average score for each student and count the number of students who passed
+        let passedStudents = 0;
+        for (let maHS in studentScores) {
+            const scores = studentScores[maHS];
+            const totalScore = scores.reduce((sum, score) => sum + (score || 0), 0);
+            const averageScore = totalScore / scores.length;
+
+            if (averageScore >= passingScore) {
+                passedStudents++;
+            }
+        }
+
+        // Fetch the class size
+        let Lop = await db.Lops.findOne({
+            where: { maLop: query.maLop },
+            attributes: ['siSo'],
+        });
+
+        if (!Lop) {
+            return {
+                EM: "Class not found",
+                EC: "-1",
+                DT: [],
+            };
+        }
+
+        const classSize = Lop.siSo;
+
+        // Calculate the pass rate
+        const passRate = (passedStudents / classSize) * 100;
+
+        // Check if a record already exists in BaoCaoTongKetHocKys
+        let existingReport = await db.BaoCaoTongKetHocKys.findOne({
+            where: {
+                maLop: query.maLop,
+                hocKy: query.hocKy,
+            },
+        });
+
+        if (existingReport) {
+            // Update the existing record
+            await db.BaoCaoTongKetHocKys.update(
+                {
+                    siSo: classSize,
+                    soLuongDat: passedStudents,
+                    tiLe: passRate,
+                },
+                {
+                    where: {
+                        maLop: query.maLop,
+                        hocKy: query.hocKy,
+                    },
+                }
+            );
+        } else {
+            // Create a new record
+            await db.BaoCaoTongKetHocKys.create({
+                maLop: query.maLop,
+                hocKy: query.hocKy,
+                siSo: classSize,
+                soLuongDat: passedStudents,
+                tiLe: passRate,
+            });
+        }
+
+        return {
+            EM: "Get bao cao ky success",
+            EC: "0",
+            DT: {
+                passedStudents,
+                classSize,
+                passRate,
+            },
+        };
+    } catch (e) {
+        console.log(e);
+        return {
+            EM: "Error from server",
+            EC: "-1",
+            DT: [],
+        };
+    }
+};
 const gvService = {
     getPhanCong,
     getBangDiem,
@@ -348,6 +551,9 @@ const gvService = {
     deleteBangDiem,
     getBaoCaoMon,
     deleteBaoCaoMon,
+    getLops,
+    getHocSinhLop,
+    getBaoCaoKy
 };
 
 export default gvService;

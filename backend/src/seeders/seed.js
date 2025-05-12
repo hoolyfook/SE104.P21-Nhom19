@@ -69,6 +69,21 @@ module.exports = {
                 createdAt: new Date(),
                 updatedAt: new Date(),
             },
+            {
+                url: '/giangvien/lops',
+                createdAt: new Date(),
+                updatedAt: new Date(),
+            },
+            {
+                url: '/giangvien/baocao/lop',
+                createdAt: new Date(),
+                updatedAt: new Date(),
+            },
+            {
+                url: '/giangvien/lops/hocsinhs',
+                createdAt: new Date(),
+                updatedAt: new Date(),
+            },
 
         ]);
         await queryInterface.bulkInsert('GroupUsers', [
@@ -191,7 +206,24 @@ module.exports = {
                 createdAt: new Date(),
                 updatedAt: new Date(),
             },
-
+            {
+                GroupID: 2, // Reference to student group
+                roleId: 14, // Reference to role ID for student
+                createdAt: new Date(),
+                updatedAt: new Date(),
+            },
+            {
+                GroupID: 2, // Reference to student group
+                roleId: 15, // Reference to role ID for student
+                createdAt: new Date(),
+                updatedAt: new Date(),
+            },
+            {
+                GroupID: 2, // Reference to student group
+                roleId: 16, // Reference to role ID for student
+                createdAt: new Date(),
+                updatedAt: new Date(),
+            },
         ]);
         await queryInterface.bulkInsert('Users', [
             {
@@ -257,6 +289,7 @@ module.exports = {
                 tenLop: 'Class 10A1',
                 khoiLop: '10',
                 siSo: 1, // Within the limit of 40 students per class (QĐ2)
+                chuNhiem: 2, // Reference a User ID (Teacher)
                 createdAt: new Date(),
                 updatedAt: new Date(),
             },
@@ -265,6 +298,7 @@ module.exports = {
                 tenLop: 'Class 11A1',
                 khoiLop: '11',
                 siSo: 1, // Within the limit of 40 students per class (QĐ2)
+                chuNhiem: 3, // Reference a User ID (Teacher)
                 createdAt: new Date(),
                 updatedAt: new Date(),
             },

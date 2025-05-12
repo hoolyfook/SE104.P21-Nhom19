@@ -1256,7 +1256,184 @@ let initApiRoutes = (app) => {
  *                   example: ""
  */
    router.delete("/giangvien/baocao/mon", gvController.deleteBaoCaoMon);
-
+   /**
+    * @swagger
+    * /giangvien/lops:
+    *   get:
+    *     summary: Retrieve all classes managed by the authenticated teacher
+    *     tags: [GiangVien]
+    *     security:
+    *       - bearerAuth: [] # Assuming JWT authentication is used
+    *     responses:
+    *       200:
+    *         description: Classes retrieved successfully
+    *         content:
+    *           application/json:
+    *             schema:
+    *               type: object
+    *               properties:
+    *                 EM:
+    *                   type: string
+    *                   example: "Get Lop success"
+    *                 EC:
+    *                   type: string
+    *                   example: "0"
+    *                 DT:
+    *                   type: array
+    *                   items:
+    *                     type: object
+    *                     properties:
+    *                       maLop:
+    *                         type: string
+    *                         example: "10A1"
+    *                       tenLop:
+    *                         type: string
+    *                         example: "Class 10A1"
+    *       500:
+    *         description: Error from server
+    *         content:
+    *           application/json:
+    *             schema:
+    *               type: object
+    *               properties:
+    *                 EM:
+    *                   type: string
+    *                   example: "Error from server"
+    *                 EC:
+    *                   type: string
+    *                   example: "-1"
+    *                 DT:
+    *                   type: string
+    *                   example: ""
+    */
+   router.get("/giangvien/lops", gvController.getLops);
+   /**
+ * @swagger
+ * /giangvien/lops/hocsinhs:
+ *   get:
+ *     summary: Retrieve all students in a specific class managed by the authenticated teacher
+ *     tags: [GiangVien]
+ *     security:
+ *       - bearerAuth: [] # Assuming JWT authentication is used
+ *     parameters:
+ *       - in: query
+ *         name: maLop
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The class ID (maLop) to retrieve students for
+ *     responses:
+ *       200:
+ *         description: List of students retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 EM:
+ *                   type: string
+ *                   example: "Get HocSinh success"
+ *                 EC:
+ *                   type: string
+ *                   example: "0"
+ *                 DT:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       maHS:
+ *                         type: integer
+ *                         example: 101
+ *                       hoTen:
+ *                         type: string
+ *                         example: "Nguyen Van A"
+ *       500:
+ *         description: Error from server
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 EM:
+ *                   type: string
+ *                   example: "Error from server"
+ *                 EC:
+ *                   type: string
+ *                   example: "-1"
+ *                 DT:
+ *                   type: string
+ *                   example: ""
+ */
+   router.get("/giangvien/lops/hocsinhs", gvController.getHocSinhLop);
+   /**
+ * @swagger
+ * /giangvien/baocao/lop:
+ *   get:
+ *     summary: Retrieve the semester report for a specific class managed by the authenticated teacher
+ *     tags: [GiangVien]
+ *     security:
+ *       - bearerAuth: [] # Assuming JWT authentication is used
+ *     parameters:
+ *       - in: query
+ *         name: maLop
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The class ID
+ *         example: "10A1"
+ *       - in: query
+ *         name: hocKy
+ *         schema:
+ *           type: string
+ *           enum: [I, II]
+ *         required: true
+ *         description: The semester
+ *         example: "I"
+ *     responses:
+ *       200:
+ *         description: Semester report retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 EM:
+ *                   type: string
+ *                   example: "Get bao cao ky success"
+ *                 EC:
+ *                   type: string
+ *                   example: "0"
+ *                 DT:
+ *                   type: object
+ *                   properties:
+ *                     passedStudents:
+ *                       type: integer
+ *                       example: 25
+ *                     classSize:
+ *                       type: integer
+ *                       example: 30
+ *                     passRate:
+ *                       type: number
+ *                       format: float
+ *                       example: 83.33
+ *       500:
+ *         description: Error from server
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 EM:
+ *                   type: string
+ *                   example: "Error from server"
+ *                 EC:
+ *                   type: string
+ *                   example: "-1"
+ *                 DT:
+ *                   type: string
+ *                   example: ""
+ */
+   router.get("/giangvien/baocao/lop", gvController.getBaoCaoKy);
    //hoc sinh 
    /**
  * @swagger
