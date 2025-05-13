@@ -79,10 +79,28 @@ const getUserInfo = async (req, res) => {  // get user info controller
         })
     }
 }
+const getRole = async (req, res) => {  // get roles controller
+    try {
+        let data = await userService.getRole(req.jwt.id);
+        return res.status(200).json({
+            EM: data.EM,
+            EC: data.EC,
+            DT: data.DT
+        })
+    } catch (e) {
+        console.log(e)
+        return res.status(500).json({
+            EM: "Error from server",
+            EC: "-1",
+            DT: ""
+        })
+    }
+}
 const userController = {
     getJWT,
     logoutUser,
     changePassword,
-    getUserInfo
+    getUserInfo,
+    getRole
 }
 export default userController;

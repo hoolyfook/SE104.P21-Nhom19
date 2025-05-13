@@ -133,10 +133,47 @@ const getUserInfo = async (email) => {
         };
     }
 }
+const getRole = async (id) => {
+    try {
+        let role = await db.Users.findOne({
+            where: {
+                id: id
+            },
+            attributes: [],
+            include: {
+                model: db.GroupUsers,
+                as: 'GroupUsers',
+                attributes: ['name'],
+            }
+        });
+        if (role) {
+            role = role.get({ plain: true });
+            return {
+                EM: "Get role success",
+                EC: "0",
+                DT: role
+            };
+        } else {
+            return {
+                EM: "User does not exist",
+                EC: "0",
+                DT: []
+            };
+        }
+    } catch (e) {
+        console.log(e);
+        return {
+            EM: "Get role error",
+            EC: "-1",
+            DT: []
+        };
+    }
+}
 const userService = {
     getGroupRoles,
     changePassword,
-    getUserInfo
+    getUserInfo,
+    getRole
 };
 
 export default userService;
