@@ -84,6 +84,11 @@ module.exports = {
                 createdAt: new Date(),
                 updatedAt: new Date(),
             },
+            {
+                url: '/users/role',
+                createdAt: new Date(),
+                updatedAt: new Date(),
+            },
 
         ]);
         await queryInterface.bulkInsert('GroupUsers', [
@@ -221,6 +226,24 @@ module.exports = {
             {
                 GroupID: 2, // Reference to student group
                 roleId: 16, // Reference to role ID for student
+                createdAt: new Date(),
+                updatedAt: new Date(),
+            },
+            {
+                GroupID: 1, // Reference to student group
+                roleId: 17, // Reference to role ID for student
+                createdAt: new Date(),
+                updatedAt: new Date(),
+            },
+            {
+                GroupID: 2, // Reference to student group
+                roleId: 17, // Reference to role ID for student
+                createdAt: new Date(),
+                updatedAt: new Date(),
+            },
+            {
+                GroupID: 3, // Reference to student group
+                roleId: 17, // Reference to role ID for student
                 createdAt: new Date(),
                 updatedAt: new Date(),
             },
