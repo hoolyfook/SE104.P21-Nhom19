@@ -6,8 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent} from "@/components/ui/card";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom"; // 🔥 Import useNavigate
-import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import axios from "../api/axiosClient";
 
 const loginSchema = z.object({
   email: z.string().email("Email không hợp lệ"),
@@ -24,10 +24,9 @@ export default function LoginForm() {
 
   const onSubmit = (data: any) => {
     setLoading(true);
-    console.log("Đăng nhập với:", data);
     try {
-      axios.post("http://localhost:8080/api/v1/users/login", data, {
-        withCredentials: true, // Bật `withCredentials` để gửi và nhận cookie
+      axios.post("/users/login", data, {
+        withCredentials: true,
       })
       .then((response) => {
         console.log('Login response:', response.data); // Kiểm tra cookie
@@ -40,7 +39,7 @@ export default function LoginForm() {
     }
     setTimeout(() => {
       setLoading(false);
-      navigate("/dashboard");
+      navigate("/profile");
     }, 10);
   };
   return (
