@@ -1,7 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axios from "../../src/api/axiosClient";
-import { Cookie } from "lucide-react";
 
 export default function Navbar() {
   const navigate = useNavigate();
@@ -62,28 +61,39 @@ export default function Navbar() {
           {/* Link chỉ cho admin */}
           {roleUser === "admin" && (
             <>
-              <Link to="/dashboard" className="text-[20px] font-bold px-4 py-2 hover:bg-gray-300 hover:text-black rounded">
+              <Link to="/dashboard" className="text-[16px] font-bold px-4 py-2 hover:bg-gray-300 hover:text-black rounded">
                 Danh sách học sinh
               </Link>
-              <Link to="/results" className="text-[20px] font-bold px-4 py-2 hover:bg-gray-300 hover:text-black rounded">
+              <Link to="/DanhSachQuyDinh" className="text-[16px] font-bold px-4 py-2 hover:bg-gray-300 hover:text-black rounded">
+                Danh sách quy định
+              </Link>
+              <Link to="/results" className="text-[16px] font-bold px-4 py-2 hover:bg-gray-300 hover:text-black rounded">
                 Danh sách lớp
               </Link>
-              <Link to="/studyresult" className="text-[20px] font-bold px-4 py-2 hover:bg-gray-300 hover:text-black rounded">
-                Kết quả học tập
+              <Link to="/DanhSachMonHoc" className="text-[16px] font-bold px-4 py-2 hover:bg-gray-300 hover:text-black rounded">
+                Danh sách môn học
               </Link>
-              <Link to="/gradereport" className="text-[20px] font-bold px-4 py-2 hover:bg-gray-300 hover:text-black rounded">
-                Kết quả môn
+              <Link to="/phanconggiangvien" className="text-[16px] font-bold px-4 py-2 hover:bg-gray-300 hover:text-black rounded">
+                Phân công giảng viên
               </Link>
-              <Link to="/tongkethocki" className="text-[20px] font-bold px-4 py-2 hover:bg-gray-300 hover:text-black rounded">
+              <Link to="/tongkethocki" className="text-[16px] font-bold px-4 py-2 hover:bg-gray-300 hover:text-black rounded">
                 Báo cáo học kì
+              </Link>
+              
+            </>
+          )}
+          {/* Link chỉ cho student */}
+          {roleUser === "teacher" && (
+            <>
+              <Link to="/BangDiem" className="text-[16px] font-bold px-4 py-2 hover:bg-gray-300 hover:text-black rounded">
+                Bảng điểm
               </Link>
             </>
           )}
-
           {/* Link chỉ cho student */}
           {roleUser === "student" && (
             <>
-              <Link to="/dashboard" className="text-[20px] font-bold px-4 py-2 hover:bg-gray-300 hover:text-black rounded">
+              <Link to="/dashboard" className="text-[16px] font-bold px-4 py-2 hover:bg-gray-300 hover:text-black rounded">
                 Danh sách học sinh
               </Link>
             </>
