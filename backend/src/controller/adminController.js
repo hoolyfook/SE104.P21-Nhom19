@@ -450,6 +450,40 @@ const deleteBaoCaoKy = async (req, res) => {
         })
     }
 }
+const getBaoCaoLops = async (req, res) => {
+    try {
+        let data = await adminService.getBaoCaoLops(req.query);
+        return res.status(200).json({
+            EM: data.EM,
+            EC: data.EC,
+            DT: data.DT
+        })
+    } catch (e) {
+        console.log(e)
+        return res.status(500).json({
+            EM: "Error from server",
+            EC: "-1",
+            DT: ""
+        })
+    }
+}
+const getBaoCaoMons = async (req, res) => {
+    try {
+        let data = await adminService.getBaoCaoMons(req.query);
+        return res.status(200).json({
+            EM: data.EM,
+            EC: data.EC,
+            DT: data.DT
+        })
+    } catch (e) {
+        console.log(e)
+        return res.status(500).json({
+            EM: "Error from server",
+            EC: "-1",
+            DT: ""
+        })
+    }
+}
 const adminController = {
     getUsers,
     createUser,
@@ -476,7 +510,9 @@ const adminController = {
     updateHocSinhLop,
     deleteHocSinhLop,
     getBaoCaoKy,
-    deleteBaoCaoKy
+    deleteBaoCaoKy,
+    getBaoCaoLops,
+    getBaoCaoMons
 
 }
 export default adminController;

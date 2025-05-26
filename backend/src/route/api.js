@@ -824,6 +824,149 @@ let initApiRoutes = (app) => {
 *                   example: ""
 */
   router.delete("/admin/baocao/lop", adminController.deleteBaoCaoKy);
+  /**
+   * @swagger
+   * /admin/baocao/lops:
+   *   get:
+   *     summary: Retrieve semester reports for all classes
+   *     tags: [Admin]
+   *     parameters:
+   *       - in: query
+   *         name: hocKy
+   *         schema:
+   *           type: string
+   *         required: true
+   *         description: The semester indicator (e.g. "I" or "II")
+   *     responses:
+   *       200:
+   *         description: Semester reports retrieved successfully
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 EM:
+   *                   type: string
+   *                   example: "Get BaoCaoLops success"
+   *                 EC:
+   *                   type: string
+   *                   example: "0"
+   *                 DT:
+   *                   type: array
+   *                   items:
+   *                     type: object
+   *                     properties:
+   *                       maLop:
+   *                         type: string
+   *                         example: "10A1"
+   *                       hocKy:
+   *                         type: string
+   *                         example: "I"
+   *                       siSo:
+   *                         type: integer
+   *                         example: 30
+   *                       soLuongDat:
+   *                         type: integer
+   *                         example: 25
+   *                       tiLe:
+   *                         type: number
+   *                         format: float
+   *                         example: 83.33
+   *                       Lops:
+   *                         type: object
+   *                         properties:
+   *                           tenLop:
+   *                             type: string
+   *                             example: "Class 10A1"
+   *       500:
+   *         description: Error from server
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 EM:
+   *                   type: string
+   *                   example: "Error from server"
+   *                 EC:
+   *                   type: string
+   *                   example: "-1"
+   *                 DT:
+   *                   type: string
+   *                   example: ""
+   */
+  router.get("/admin/baocao/lops", adminController.getBaoCaoLops);
+  /**
+ * @swagger
+ * /admin/baocao/mon:
+ *   get:
+ *     summary: Retrieve the aggregated report for a specific subject across all classes
+ *     tags: [Admin]
+ *     parameters:
+ *       - in: query
+ *         name: hocKy
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The semester indicator (e.g. "I" or "II")
+ *       - in: query
+ *         name: maMon
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The subject ID
+ *     responses:
+ *       200:
+ *         description: Aggregated subject report retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 EM:
+ *                   type: string
+ *                   example: "Get BaoCaoMons success"
+ *                 EC:
+ *                   type: string
+ *                   example: "0"
+ *                 DT:
+ *                   type: object
+ *                   properties:
+ *                     maMon:
+ *                       type: string
+ *                       example: "MATH101"
+ *                     hocKy:
+ *                       type: string
+ *                       example: "I"
+ *                     siSo:
+ *                       type: integer
+ *                       example: 100
+ *                     soLuongDat:
+ *                       type: integer
+ *                       example: 80
+ *                     tiLe:
+ *                       type: number
+ *                       format: float
+ *                       example: 80.0
+ *       500:
+ *         description: Error from server
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 EM:
+ *                   type: string
+ *                   example: "Error from server"
+ *                 EC:
+ *                   type: string
+ *                   example: "-1"
+ *                 DT:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ */
+  router.get("/admin/baocao/mon", adminController.getBaoCaoMons);
 
   // Giang Vien
 
