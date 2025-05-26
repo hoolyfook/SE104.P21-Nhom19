@@ -321,7 +321,7 @@ const deleteQuyDinh = async (id) => {
 const getLops = async () => {
     try {
         let lops = await db.Lops.findAll({
-            attributes: ['maLop', 'tenLop', 'siSo'],
+            attributes: ['maLop', 'tenLop', 'siSo', 'khoiLop'],
         });
         return {
             EM: "Get Lops success",
@@ -1111,6 +1111,231 @@ const deleteBaoCaoKy = async (data) => {
         }
     }
 }
+const getBaoCaoLops = async (query) => {
+    try {
+        // Validate that hocKy is provided
+        const hocKy = query.hocKy;
+        // Retrieve all classes
+        let allLops = await db.Lops.findAll({
+            attributes: ['maLop', 'siSo', 'tenLop']
+        });
+
+        // Fetch the passing score rule
+        let rule = await db.QuyDinhs.findOne({
+            where: { moTa: "Điểm đạt môn" },
+            attributes: ['giaTri']
+        });
+
+        const passingScore = parseFloat(rule.giaTri);
+
+        // Loop through each class and update or create the report
+        for (const lop of allLops) {
+            // Fetch all scores for this class in the given semester
+            let scores = await db.BangDiems.findAll({
+                where: { maLop: lop.maLop, hocKy },
+                attributes: ['maHS', 'diemTB']
+            });
+
+            // If no scores exist, skip updating report for that class
+            if (scores.length === 0) continue;
+
+            // Group scores by student (maHS)
+            let studentScores = {};
+            scores.forEach(score => {
+                if (!studentScores[score.maHS]) {
+                    studentScores[score.maHS] = [];
+                }
+                studentScores[score.maHS].push(score.diemTB);
+            });
+
+            // Calculate the number of students who passed
+            let passedStudents = 0;
+            for (let maHS in studentScores) {
+                const scoresArr = studentScores[maHS];
+                // Calculate average score for the student
+                const avgScore = scoresArr.reduce((sum, d) => sum + (d || 0), 0) / scoresArr.length;
+                if (avgScore >= passingScore) {
+                    passedStudents++;
+                }
+            }
+
+            const classSize = lop.siSo;
+            const passRate = (passedStudents / classSize) * 100;
+
+            // Check if a report already exists for the class and hocKy
+            let existingReport = await db.BaoCaoTongKetHocKys.findOne({
+                where: { maLop: lop.maLop, hocKy }
+            });
+
+            if (existingReport) {
+                // Update the existing record
+                await db.BaoCaoTongKetHocKys.update({
+                    siSo: classSize,
+                    soLuongDat: passedStudents,
+                    tiLe: passRate,
+                }, {
+                    where: { maLop: lop.maLop, hocKy }
+                });
+            } else {
+                // Create a new record
+                await db.BaoCaoTongKetHocKys.create({
+                    maLop: lop.maLop,
+                    hocKy: hocKy,
+                    siSo: classSize,
+                    soLuongDat: passedStudents,
+                    tiLe: passRate,
+                });
+            }
+        }
+
+        // Fetch and return all reports for the given hocKy with related class info
+        let reports = await db.BaoCaoTongKetHocKys.findAll({
+            where: { hocKy },
+            attributes: ['maLop', 'hocKy', 'siSo', 'soLuongDat', 'tiLe'],
+            include: [
+                {
+                    model: db.Lops,
+                    as: 'Lops',
+                    attributes: ['tenLop']
+                }
+            ]
+        });
+
+        return {
+            EM: "Get BaoCaoLops success",
+            EC: "0",
+            DT: reports,
+        }
+    } catch (e) {
+        console.log(e);
+        return {
+            EM: "Error from server",
+            EC: "-1",
+            DT: [],
+        }
+    }
+}
+const getBaoCaoMons = async (query) => {
+    try {
+        // Validate that hocKy and maMon are provided
+        const { hocKy, maMon } = query;
+        if (!hocKy || !maMon) {
+            throw new Error("hocKy and maMon parameters are required");
+        }
+
+        // Fetch the passing score rule
+        let rule = await db.QuyDinhs.findOne({
+            where: { moTa: "Điểm đạt môn" },
+            attributes: ['giaTri']
+        });
+        if (!rule) {
+            throw new Error("Passing score rule not found");
+        }
+        const passingScore = parseFloat(rule.giaTri);
+
+        // Retrieve all classes
+        let allLops = await db.Lops.findAll({
+            attributes: ['maLop', 'siSo']
+        });
+
+        // Array to accumulate per-class reports
+        let reports = [];
+
+        for (const lop of allLops) {
+            // Fetch scores for this class, subject and semester (hocKy)
+            let scores = await db.BangDiems.findAll({
+                where: { maLop: lop.maLop, hocKy, maMon },
+                attributes: ['maHS', 'diemTB']
+            });
+
+            // Only proceed if class has scores
+            if (scores.length === 0) continue;
+
+            // Use the class size from Lops table (assumed as siSo)
+            const classSize = lop.siSo;
+
+            // Group scores by student (maHS)
+            let studentScores = {};
+            scores.forEach(score => {
+                if (!studentScores[score.maHS]) {
+                    studentScores[score.maHS] = [];
+                }
+                studentScores[score.maHS].push(score.diemTB);
+            });
+
+            // Count number of students who passed in this class
+            let passedStudents = 0;
+            for (let maHS in studentScores) {
+                const scoresArr = studentScores[maHS];
+                const avgScore = scoresArr.reduce((sum, d) => sum + (d || 0), 0) / scoresArr.length;
+                if (avgScore >= passingScore) {
+                    passedStudents++;
+                }
+            }
+
+            // Calculate class pass rate
+            const passRate = (passedStudents / classSize) * 100;
+
+            // Check if a record already exists in BaoCaoTongKetMonHocs for this subject, hocKy and class
+            let existingReport = await db.BaoCaoTongKetMons.findOne({
+                where: { maMon, hocKy, maLop: lop.maLop }
+            });
+
+            if (existingReport) {
+                // Update the existing record
+                await db.BaoCaoTongKetMons.update({
+                    siSo: classSize,
+                    soLuongDat: passedStudents,
+                    tiLe: passRate,
+                }, {
+                    where: { maMon, hocKy, maLop: lop.maLop }
+                });
+            } else {
+                // Create a new record
+                await db.BaoCaoTongKetMons.create({
+                    maMon,
+                    hocKy,
+                    maLop: lop.maLop,
+                    siSo: classSize,
+                    soLuongDat: passedStudents,
+                    tiLe: passRate,
+                });
+            }
+
+            // Push per-class report to the array
+            reports.push({
+                maLop: lop.maLop,
+                maMon,
+                hocKy,
+                siSo: classSize,
+                soLuongDat: passedStudents,
+                tiLe: passRate
+            });
+        }
+
+        // If no class had scores, return an empty report
+        if (reports.length === 0) {
+            return {
+                EM: "No scores found for the subject and semester",
+                EC: "-1",
+                DT: {}
+            }
+        }
+
+        return {
+            EM: "Get BaoCaoMons success",
+            EC: "0",
+            DT: reports
+        };
+    } catch (e) {
+        console.log(e);
+        return {
+            EM: "Error from server",
+            EC: "-1",
+            DT: []
+        };
+    }
+}
 const adminService = {
     getUsers,
     createUser,
@@ -1138,7 +1363,8 @@ const adminService = {
     deleteHocSinhLop,
     getBaoCaoKy,
     deleteBaoCaoKy,
-
+    getBaoCaoLops,
+    getBaoCaoMons
 };
 
 export default adminService;
