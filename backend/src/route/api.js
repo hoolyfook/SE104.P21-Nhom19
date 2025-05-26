@@ -1330,10 +1330,10 @@ let initApiRoutes = (app) => {
    * @swagger
    * /giangvien/baocao/mon:
    *   get:
-   *     summary: Retrieve the report for a specific class and subject
+   *     summary: Retrieve the aggregated report for a specific subject across all classes managed by the authenticated teacher
    *     tags: [GiangVien]
    *     security:
-   *       - bearerAuth: [] # Assuming JWT authentication is used
+   *       - bearerAuth: []  # Assuming JWT authentication is used
    *     parameters:
    *       - in: query
    *         name: maLop
@@ -1355,11 +1355,18 @@ let initApiRoutes = (app) => {
    *           type: string
    *           enum: [I, II]
    *         required: true
-   *         description: The semester
+   *         description: The semester indicator
    *         example: "I"
+   *       - in: query
+   *         name: namHoc
+   *         schema:
+   *           type: string
+   *         required: true
+   *         description: The academic year (e.g., "2025-2026")
+   *         example: "2025-2026"
    *     responses:
    *       200:
-   *         description: Report retrieved successfully
+   *         description: Aggregated subject report retrieved successfully
    *         content:
    *           application/json:
    *             schema:
@@ -1403,65 +1410,69 @@ let initApiRoutes = (app) => {
    */
   router.get("/giangvien/baocao/mon", gvController.getBaoCaoMon);
   /**
-* @swagger
-* /giangvien/baocao/mon:
-*   delete:
-*     summary: Delete the report for a specific class and subject
-*     tags: [GiangVien]
-*     security:
-*       - bearerAuth: [] # Assuming JWT authentication is used
-*     requestBody:
-*       required: true
-*       content:
-*         application/json:
-*           schema:
-*             type: object
-*             properties:
-*               maLop:
-*                 type: string
-*                 description: The class ID
-*                 example: "10A1"
-*               maMon:
-*                 type: string
-*                 description: The subject ID
-*                 example: "MATH101"
-*               hocKy:
-*                 type: string
-*                 description: The semester
-*                 example: "I"
-*     responses:
-*       200:
-*         description: Report deleted successfully
-*         content:
-*           application/json:
-*             schema:
-*               type: object
-*               properties:
-*                 EM:
-*                   type: string
-*                   example: "Delete BaoCaoMon success"
-*                 EC:
-*                   type: string
-*                   example: "0"
-*                 DT:
-*                   type: array
-*       500:
-*         description: Error from server
-*         content:
-*           application/json:
-*             schema:
-*               type: object
-*               properties:
-*                 EM:
-*                   type: string
-*                   example: "Error from server"
-*                 EC:
-*                   type: string
-*                   example: "-1"
-*                 DT:
-*                   type: string
-*                   example: ""
-*/
+   * @swagger
+   * /giangvien/baocao/mon:
+   *   delete:
+   *     summary: Delete the aggregated report for a specific subject across all classes
+   *     tags: [GiangVien]
+   *     security:
+   *       - bearerAuth: []  # Assuming JWT authentication is used
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             properties:
+   *               maLop:
+   *                 type: string
+   *                 description: The class ID
+   *                 example: "10A1"
+   *               maMon:
+   *                 type: string
+   *                 description: The subject ID
+   *                 example: "MATH101"
+   *               hocKy:
+   *                 type: string
+   *                 description: The semester
+   *                 example: "I"
+   *               namHoc:
+   *                 type: string
+   *                 description: The academic year (e.g., "2025-2026")
+   *                 example: "2025-2026"
+   *     responses:
+   *       200:
+   *         description: Aggregated subject report deleted successfully
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 EM:
+   *                   type: string
+   *                   example: "Delete BaoCaoMon success"
+   *                 EC:
+   *                   type: string
+   *                   example: "0"
+   *                 DT:
+   *                   type: array
+   *       500:
+   *         description: Error from server
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 EM:
+   *                   type: string
+   *                   example: "Error from server"
+   *                 EC:
+   *                   type: string
+   *                   example: "-1"
+   *                 DT:
+   *                   type: string
+   *                   example: ""
+   */
   router.delete("/giangvien/baocao/mon", gvController.deleteBaoCaoMon);
   /**
    * @swagger
