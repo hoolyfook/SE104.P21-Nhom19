@@ -35,6 +35,10 @@ module.exports = {
       tiLe: {
         type: Sequelize.FLOAT,
       },
+      namHoc: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
       createdAt: {
         type: Sequelize.DATE,
         allowNull: false,

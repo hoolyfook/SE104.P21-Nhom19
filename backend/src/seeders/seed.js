@@ -334,6 +334,7 @@ module.exports = {
                 khoiLop: '10',
                 siSo: 1, // Within the limit of 40 students per class (QĐ2)
                 chuNhiem: 2, // Reference a User ID (Teacher)
+                namHoc: '2020-2021',
                 createdAt: new Date(),
                 updatedAt: new Date(),
             },
@@ -343,6 +344,7 @@ module.exports = {
                 khoiLop: '11',
                 siSo: 1, // Within the limit of 40 students per class (QĐ2)
                 chuNhiem: 3, // Reference a User ID (Teacher)
+                namHoc: '2020-2021',
                 createdAt: new Date(),
                 updatedAt: new Date(),
             },

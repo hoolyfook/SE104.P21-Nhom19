@@ -409,16 +409,20 @@ const getHocSinhLop = async (id, query) => {
 
 const getBaoCaoKy = async (id, query) => {
     try {
-
+        // Check if the teacher has permission for the class and that the class's namHoc matches the query
         let lops = await db.Lops.findAll({
-            where: { chuNhiem: id, maLop: query.maLop },
+            where: {
+                chuNhiem: id,
+                maLop: query.maLop,
+                namHoc: query.namHoc  // matching academic year condition
+            },
         });
         if (lops.length === 0) {
             return {
-                EM: "Don't have permission",
+                EM: "Don't have permission or class with specified academic year not found",
                 EC: "-1",
                 DT: [],
-            }
+            };
         }
 
         // Fetch all scores for the class and semester
@@ -435,7 +439,7 @@ const getBaoCaoKy = async (id, query) => {
             };
         }
 
-        // Fetch the passing score
+        // Fetch the passing score rule
         let diemdau = await db.QuyDinhs.findOne({
             where: { moTa: "Điểm đạt môn" },
             attributes: ['giaTri'],
@@ -472,9 +476,9 @@ const getBaoCaoKy = async (id, query) => {
             }
         }
 
-        // Fetch the class size
+        // Fetch the class size with matching academic year
         let Lop = await db.Lops.findOne({
-            where: { maLop: query.maLop },
+            where: { maLop: query.maLop, namHoc: query.namHoc },
             attributes: ['siSo'],
         });
 

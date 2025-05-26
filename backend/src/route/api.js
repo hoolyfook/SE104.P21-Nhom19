@@ -828,7 +828,7 @@ let initApiRoutes = (app) => {
    * @swagger
    * /admin/baocao/lops:
    *   get:
-   *     summary: Retrieve semester reports for all classes
+   *     summary: Retrieve semester reports for all classes filtered by academic year
    *     tags: [Admin]
    *     parameters:
    *       - in: query
@@ -837,6 +837,14 @@ let initApiRoutes = (app) => {
    *           type: string
    *         required: true
    *         description: The semester indicator (e.g. "I" or "II")
+   *         example: "I"
+   *       - in: query
+   *         name: namHoc
+   *         schema:
+   *           type: string
+   *         required: true
+   *         description: The academic year (e.g., "2025-2026")
+   *         example: "2025-2026"
    *     responses:
    *       200:
    *         description: Semester reports retrieved successfully
@@ -897,75 +905,84 @@ let initApiRoutes = (app) => {
    */
   router.get("/admin/baocao/lops", adminController.getBaoCaoLops);
   /**
- * @swagger
- * /admin/baocao/mon:
- *   get:
- *     summary: Retrieve the aggregated report for a specific subject across all classes
- *     tags: [Admin]
- *     parameters:
- *       - in: query
- *         name: hocKy
- *         schema:
- *           type: string
- *         required: true
- *         description: The semester indicator (e.g. "I" or "II")
- *       - in: query
- *         name: maMon
- *         schema:
- *           type: string
- *         required: true
- *         description: The subject ID
- *     responses:
- *       200:
- *         description: Aggregated subject report retrieved successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 EM:
- *                   type: string
- *                   example: "Get BaoCaoMons success"
- *                 EC:
- *                   type: string
- *                   example: "0"
- *                 DT:
- *                   type: object
- *                   properties:
- *                     maMon:
- *                       type: string
- *                       example: "MATH101"
- *                     hocKy:
- *                       type: string
- *                       example: "I"
- *                     siSo:
- *                       type: integer
- *                       example: 100
- *                     soLuongDat:
- *                       type: integer
- *                       example: 80
- *                     tiLe:
- *                       type: number
- *                       format: float
- *                       example: 80.0
- *       500:
- *         description: Error from server
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 EM:
- *                   type: string
- *                   example: "Error from server"
- *                 EC:
- *                   type: string
- *                   example: "-1"
- *                 DT:
- *                   type: array
- *                   items:
- *                     type: string
- */
+   * @swagger
+   * /admin/baocao/mon:
+   *   get:
+   *     summary: Retrieve the aggregated report for a specific subject across all classes
+   *     tags: [Admin]
+   *     parameters:
+   *       - in: query
+   *         name: hocKy
+   *         schema:
+   *           type: string
+   *         required: true
+   *         description: The semester indicator (e.g. "I" or "II")
+   *         example: "I"
+   *       - in: query
+   *         name: maMon
+   *         schema:
+   *           type: string
+   *         required: true
+   *         description: The subject ID
+   *         example: "MATH101"
+   *       - in: query
+   *         name: namHoc
+   *         schema:
+   *           type: string
+   *         required: true
+   *         description: The academic year (e.g., "2025-2026")
+   *         example: "2025-2026"
+   *     responses:
+   *       200:
+   *         description: Aggregated subject report retrieved successfully
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 EM:
+   *                   type: string
+   *                   example: "Get BaoCaoMons success"
+   *                 EC:
+   *                   type: string
+   *                   example: "0"
+   *                 DT:
+   *                   type: object
+   *                   properties:
+   *                     maMon:
+   *                       type: string
+   *                       example: "MATH101"
+   *                     hocKy:
+   *                       type: string
+   *                       example: "I"
+   *                     siSo:
+   *                       type: integer
+   *                       example: 100
+   *                     soLuongDat:
+   *                       type: integer
+   *                       example: 80
+   *                     tiLe:
+   *                       type: number
+   *                       format: float
+   *                       example: 80.0
+   *       500:
+   *         description: Error from server
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 EM:
+   *                   type: string
+   *                   example: "Error from server"
+   *                 EC:
+   *                   type: string
+   *                   example: "-1"
+   *                 DT:
+   *                   type: array
+   *                   items:
+   *                     type: string
+   */
   router.get("/admin/baocao/mon", adminController.getBaoCaoMons);
 
   // Giang Vien
@@ -1556,73 +1573,80 @@ let initApiRoutes = (app) => {
 */
   router.get("/giangvien/lops/hocsinhs", gvController.getHocSinhLop);
   /**
-* @swagger
-* /giangvien/baocao/lop:
-*   get:
-*     summary: Retrieve the semester report for a specific class managed by the authenticated teacher
-*     tags: [GiangVien]
-*     security:
-*       - bearerAuth: [] # Assuming JWT authentication is used
-*     parameters:
-*       - in: query
-*         name: maLop
-*         schema:
-*           type: string
-*         required: true
-*         description: The class ID
-*         example: "10A1"
-*       - in: query
-*         name: hocKy
-*         schema:
-*           type: string
-*           enum: [I, II]
-*         required: true
-*         description: The semester
-*         example: "I"
-*     responses:
-*       200:
-*         description: Semester report retrieved successfully
-*         content:
-*           application/json:
-*             schema:
-*               type: object
-*               properties:
-*                 EM:
-*                   type: string
-*                   example: "Get bao cao ky success"
-*                 EC:
-*                   type: string
-*                   example: "0"
-*                 DT:
-*                   type: object
-*                   properties:
-*                     passedStudents:
-*                       type: integer
-*                       example: 25
-*                     classSize:
-*                       type: integer
-*                       example: 30
-*                     passRate:
-*                       type: number
-*                       format: float
-*                       example: 83.33
-*       500:
-*         description: Error from server
-*         content:
-*           application/json:
-*             schema:
-*               type: object
-*               properties:
-*                 EM:
-*                   type: string
-*                   example: "Error from server"
-*                 EC:
-*                   type: string
-*                   example: "-1"
-*                 DT:
-*                   type: string
-*                   example: ""
-*/
+   * @swagger
+   * /giangvien/baocao/lop:
+   *   get:
+   *     summary: Retrieve the semester report for a specific class (with matching academic year) managed by the authenticated teacher
+   *     tags: [GiangVien]
+   *     security:
+   *       - bearerAuth: [] # Assuming JWT authentication is used
+   *     parameters:
+   *       - in: query
+   *         name: maLop
+   *         schema:
+   *           type: string
+   *         required: true
+   *         description: The class ID
+   *         example: "10A1"
+   *       - in: query
+   *         name: hocKy
+   *         schema:
+   *           type: string
+   *           enum: [I, II]
+   *         required: true
+   *         description: The semester
+   *         example: "I"
+   *       - in: query
+   *         name: namHoc
+   *         schema:
+   *           type: string
+   *         required: true
+   *         description: The academic year (e.g., "2025-2026")
+   *         example: "2025-2026"
+   *     responses:
+   *       200:
+   *         description: Semester report retrieved successfully
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 EM:
+   *                   type: string
+   *                   example: "Get bao cao ky success"
+   *                 EC:
+   *                   type: string
+   *                   example: "0"
+   *                 DT:
+   *                   type: object
+   *                   properties:
+   *                     passedStudents:
+   *                       type: integer
+   *                       example: 25
+   *                     classSize:
+   *                       type: integer
+   *                       example: 30
+   *                     passRate:
+   *                       type: number
+   *                       format: float
+   *                       example: 83.33
+   *       500:
+   *         description: Error from server
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 EM:
+   *                   type: string
+   *                   example: "Error from server"
+   *                 EC:
+   *                   type: string
+   *                   example: "-1"
+   *                 DT:
+   *                   type: string
+   *                   example: ""
+   */
   router.get("/giangvien/baocao/lop", gvController.getBaoCaoKy);
   //hoc sinh 
   /**

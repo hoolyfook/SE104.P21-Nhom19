@@ -28,6 +28,10 @@ module.exports = {
         type: Sequelize.ENUM('I', 'II'),
         allowNull: false,
       },
+      namHoc: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
       createdAt: {
         type: Sequelize.DATE,
         allowNull: false,
