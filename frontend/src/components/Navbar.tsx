@@ -82,7 +82,7 @@ export default function Navbar() {
               
             </>
           )}
-          {/* Link chỉ cho student */}
+          {/* Link chỉ cho Giang Vien */}
           {roleUser === "teacher" && (
             <>
               <Link to="/BangDiem" className="text-[16px] font-bold px-4 py-2 hover:bg-gray-300 hover:text-black rounded">
@@ -93,8 +93,8 @@ export default function Navbar() {
           {/* Link chỉ cho student */}
           {roleUser === "student" && (
             <>
-              <Link to="/dashboard" className="text-[16px] font-bold px-4 py-2 hover:bg-gray-300 hover:text-black rounded">
-                Danh sách học sinh
+              <Link to="/ketquahoctap" className="text-[16px] font-bold px-4 py-2 hover:bg-gray-300 hover:text-black rounded">
+                Kết quả học tập
               </Link>
             </>
           )}

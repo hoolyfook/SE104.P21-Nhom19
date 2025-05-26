@@ -12,6 +12,7 @@ import BangDiemComponent from "./pages/ScoreResult";
 import DanhSachQuyDinh from "./pages/DanhSachQuyDinh";
 import DanhSachMonHoc from "./pages/DanhSachMonHoc";
 import PhanCongGiangVien from "./pages/PhanCongGiangVien";
+import KetQuaHocTap from "./pages/KetQuaHocTap";
 
 function Layout() {
   const location = useLocation();
@@ -31,7 +32,7 @@ function Layout() {
         <Route path="/gradereport" element={<GradeReport />} />
         <Route path="/tongkethocki" element={<BaoCaoTongKetHocKi />} />
         <Route path="/phanconggiangvien" element={<PhanCongGiangVien />} />
-
+        <Route path="/ketquahoctap" element={<KetQuaHocTap />} />
         <Route path="/BangDiem" element={<BangDiemComponent />} />
       </Routes>
       {!hideNavbar && <Footer />}
