@@ -202,7 +202,11 @@ const getBaoCaoMon = async (id, query) => {
     try {
         // Check if the teacher has permission for the class and subject
         let phancong = await db.GiangVien_Lop_Mons.findOne({
-            where: { maGV: id, maLop: query.maLop, maMon: query.maMon },
+            where: {
+                maGV: id,
+                maLop: query.maLop,
+                maMon: query.maMon
+            },
         });
         if (!phancong) {
             return {
@@ -214,7 +218,11 @@ const getBaoCaoMon = async (id, query) => {
 
         // Fetch all scores for the class, subject, and semester
         let bangdiem = await db.BangDiems.findAll({
-            where: { maLop: query.maLop, maMon: query.maMon, hocKy: query.hocKy },
+            where: {
+                maLop: query.maLop,
+                maMon: query.maMon,
+                hocKy: query.hocKy
+            },
             attributes: ['diemTB'],
         });
 
@@ -228,7 +236,7 @@ const getBaoCaoMon = async (id, query) => {
             };
         }
 
-        // Fetch the passing score
+        // Fetch the passing score rule
         let diemdau = await db.QuyDinhs.findOne({
             where: { moTa: "Điểm đạt môn" },
             attributes: ['giaTri'],
@@ -242,9 +250,14 @@ const getBaoCaoMon = async (id, query) => {
             };
         }
 
-        // Fetch the class size
+        const passingScore = parseFloat(diemdau.giaTri);
+
+        // Fetch the class size filtering by the academic year
         let Lop = await db.Lops.findOne({
-            where: { maLop: query.maLop },
+            where: {
+                maLop: query.maLop,
+                namHoc: query.namHoc
+            },
             attributes: ['siSo'],
         });
 
@@ -256,7 +269,6 @@ const getBaoCaoMon = async (id, query) => {
             };
         }
 
-        const passingScore = parseFloat(diemdau.giaTri);
         const classSize = Lop.siSo;
 
         // Count the number of students who passed
@@ -265,12 +277,13 @@ const getBaoCaoMon = async (id, query) => {
         // Calculate the pass rate
         const passRate = (passedStudents / classSize) * 100;
 
-        // Check if a record already exists in BaoCaoTongKetMons
+        // Check if a report already exists in BaoCaoTongKetMons (including academic year)
         let existingReport = await db.BaoCaoTongKetMons.findOne({
             where: {
                 maLop: query.maLop,
                 maMon: query.maMon,
                 hocKy: query.hocKy,
+                namHoc: query.namHoc
             },
         });
 
@@ -287,6 +300,7 @@ const getBaoCaoMon = async (id, query) => {
                         maLop: query.maLop,
                         maMon: query.maMon,
                         hocKy: query.hocKy,
+                        namHoc: query.namHoc
                     },
                 }
             );
@@ -296,6 +310,7 @@ const getBaoCaoMon = async (id, query) => {
                 maLop: query.maLop,
                 maMon: query.maMon,
                 hocKy: query.hocKy,
+                namHoc: query.namHoc,
                 siSo: classSize,
                 soLuongDat: passedStudents,
                 tiLe: passRate,
@@ -320,35 +335,45 @@ const getBaoCaoMon = async (id, query) => {
         };
     }
 };
+
 const deleteBaoCaoMon = async (id, data) => {
     try {
         let phancong = await db.GiangVien_Lop_Mons.findOne({
-            where: { maGV: id, maLop: data.maLop, maMon: data.maMon },
+            where: {
+                maGV: id,
+                maLop: data.maLop,
+                maMon: data.maMon
+            },
         });
         if (!phancong) {
             return {
                 EM: "Don't have permission",
                 EC: "-1",
                 DT: [],
-            }
+            };
         }
-        let bangdiem = await db.BaoCaoTongKetMons.destroy({
-            where: { maLop: data.maLop, maMon: data.maMon, hocKy: data.hocKy }
+        let result = await db.BaoCaoTongKetMons.destroy({
+            where: {
+                maLop: data.maLop,
+                maMon: data.maMon,
+                hocKy: data.hocKy,
+                namHoc: data.namHoc
+            }
         });
         return {
             EM: "Delete BaoCaoMon success",
             EC: "0",
-            DT: bangdiem,
-        }
+            DT: result,
+        };
     } catch (e) {
-        console.log(e)
+        console.log(e);
         return {
             EM: "Error from server",
             EC: "-1",
             DT: [],
-        }
+        };
     }
-}
+};
 const getLops = async (id) => {
     try {
         let lops = await db.Lops.findAll({
@@ -409,16 +434,20 @@ const getHocSinhLop = async (id, query) => {
 
 const getBaoCaoKy = async (id, query) => {
     try {
-
+        // Check if the teacher has permission for the class and that the class's namHoc matches the query
         let lops = await db.Lops.findAll({
-            where: { chuNhiem: id, maLop: query.maLop },
+            where: {
+                chuNhiem: id,
+                maLop: query.maLop,
+                namHoc: query.namHoc  // matching academic year condition
+            },
         });
         if (lops.length === 0) {
             return {
-                EM: "Don't have permission",
+                EM: "Don't have permission or class with specified academic year not found",
                 EC: "-1",
                 DT: [],
-            }
+            };
         }
 
         // Fetch all scores for the class and semester
@@ -435,7 +464,7 @@ const getBaoCaoKy = async (id, query) => {
             };
         }
 
-        // Fetch the passing score
+        // Fetch the passing score rule
         let diemdau = await db.QuyDinhs.findOne({
             where: { moTa: "Điểm đạt môn" },
             attributes: ['giaTri'],
@@ -472,9 +501,9 @@ const getBaoCaoKy = async (id, query) => {
             }
         }
 
-        // Fetch the class size
+        // Fetch the class size with matching academic year
         let Lop = await db.Lops.findOne({
-            where: { maLop: query.maLop },
+            where: { maLop: query.maLop, namHoc: query.namHoc },
             attributes: ['siSo'],
         });
 

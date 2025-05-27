@@ -35,6 +35,7 @@ module.exports = (sequelize, DataTypes) => {
     tiLe: {
       type: DataTypes.FLOAT,
     },
+    namHoc: { type: DataTypes.STRING, allowNull: false },
     createdAt: {
       type: DataTypes.DATE,
       allowNull: false,
