@@ -1113,10 +1113,15 @@ const deleteBaoCaoKy = async (data) => {
 }
 const getBaoCaoLops = async (query) => {
     try {
-        // Validate that hocKy is provided
-        const hocKy = query.hocKy;
-        // Retrieve all classes
+        // Validate that hocKy and namHoc are provided
+        const { hocKy, namHoc } = query;
+        if (!hocKy || !namHoc) {
+            throw new Error("hocKy and namHoc parameters are required");
+        }
+
+        // Retrieve all classes matching the academic year
         let allLops = await db.Lops.findAll({
+            where: { namHoc },
             attributes: ['maLop', 'siSo', 'tenLop']
         });
 
@@ -1125,7 +1130,9 @@ const getBaoCaoLops = async (query) => {
             where: { moTa: "Điểm đạt môn" },
             attributes: ['giaTri']
         });
-
+        if (!rule) {
+            throw new Error("Passing score rule not found");
+        }
         const passingScore = parseFloat(rule.giaTri);
 
         // Loop through each class and update or create the report
@@ -1152,7 +1159,6 @@ const getBaoCaoLops = async (query) => {
             let passedStudents = 0;
             for (let maHS in studentScores) {
                 const scoresArr = studentScores[maHS];
-                // Calculate average score for the student
                 const avgScore = scoresArr.reduce((sum, d) => sum + (d || 0), 0) / scoresArr.length;
                 if (avgScore >= passingScore) {
                     passedStudents++;
@@ -1180,7 +1186,7 @@ const getBaoCaoLops = async (query) => {
                 // Create a new record
                 await db.BaoCaoTongKetHocKys.create({
                     maLop: lop.maLop,
-                    hocKy: hocKy,
+                    hocKy,
                     siSo: classSize,
                     soLuongDat: passedStudents,
                     tiLe: passRate,
@@ -1217,10 +1223,10 @@ const getBaoCaoLops = async (query) => {
 }
 const getBaoCaoMons = async (query) => {
     try {
-        // Validate that hocKy and maMon are provided
-        const { hocKy, maMon } = query;
-        if (!hocKy || !maMon) {
-            throw new Error("hocKy and maMon parameters are required");
+        // Validate that hocKy, maMon and namHoc are provided
+        const { hocKy, maMon, namHoc } = query;
+        if (!hocKy || !maMon || !namHoc) {
+            throw new Error("hocKy, maMon and namHoc parameters are required");
         }
 
         // Fetch the passing score rule
@@ -1233,8 +1239,9 @@ const getBaoCaoMons = async (query) => {
         }
         const passingScore = parseFloat(rule.giaTri);
 
-        // Retrieve all classes
+        // Retrieve all classes matching the academic year
         let allLops = await db.Lops.findAll({
+            where: { namHoc },
             attributes: ['maLop', 'siSo']
         });
 
@@ -1251,7 +1258,6 @@ const getBaoCaoMons = async (query) => {
             // Only proceed if class has scores
             if (scores.length === 0) continue;
 
-            // Use the class size from Lops table (assumed as siSo)
             const classSize = lop.siSo;
 
             // Group scores by student (maHS)
@@ -1276,7 +1282,7 @@ const getBaoCaoMons = async (query) => {
             // Calculate class pass rate
             const passRate = (passedStudents / classSize) * 100;
 
-            // Check if a record already exists in BaoCaoTongKetMonHocs for this subject, hocKy and class
+            // Check if a record already exists in BaoCaoTongKetMons for this subject, hocKy and class
             let existingReport = await db.BaoCaoTongKetMons.findOne({
                 where: { maMon, hocKy, maLop: lop.maLop }
             });

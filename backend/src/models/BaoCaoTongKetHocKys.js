@@ -13,7 +13,8 @@ module.exports = (sequelize, DataTypes) => {
     siSo: { type: DataTypes.INTEGER },
     soLuongDat: { type: DataTypes.INTEGER },
     tiLe: { type: DataTypes.FLOAT },
-    hocKy: { type: DataTypes.ENUM('I', 'II'), allowNull: false }
+    hocKy: { type: DataTypes.ENUM('I', 'II'), allowNull: false },
+    namHoc: { type: DataTypes.STRING, allowNull: false }
   }, {
     sequelize,
     modelName: 'BaoCaoTongKetHocKys',

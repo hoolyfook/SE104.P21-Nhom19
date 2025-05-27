@@ -40,7 +40,8 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       allowNull: true,
       references: { model: 'Users', key: 'id' }
-    }
+    },
+    namHoc: { type: DataTypes.STRING, allowNull: false }
   }, {
     sequelize,
     modelName: 'Lops',
