@@ -313,13 +313,13 @@ let initApiRoutes = (app) => {
   /**
    * @swagger
    * /admin/lops:
-   *   get:
-   *     summary: Get all classes
-   *     tags: [Admin]
-   *     responses:
-   *       200:
-   *         description: List of classes retrieved successfully
-   */
+   *  get:
+   *  summary: Get all classes
+   *  tags: [Admin]
+   * responses:
+   *  200:
+   *  description: List of classes retrieved successfully
+   * */
   router.get("/admin/lops", adminController.getLops);
 
   /**
@@ -341,6 +341,9 @@ let initApiRoutes = (app) => {
    *                 type: string
    *               khoiLop:
    *                 type: string
+    *               namHoc:
+    *                type: string
+   * 
    *     responses:
    *       200:
    *         description: Class created successfully
@@ -368,6 +371,8 @@ let initApiRoutes = (app) => {
    *                 type: string
    *               khoiLop:
    *                 type: string
+   *              namHoc:
+   *                type: string
    *     responses:
    *       200:
    *         description: Class updated successfully
