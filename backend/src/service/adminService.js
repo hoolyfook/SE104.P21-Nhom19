@@ -321,7 +321,7 @@ const deleteQuyDinh = async (id) => {
 const getLops = async () => {
     try {
         let lops = await db.Lops.findAll({
-            attributes: ['maLop', 'tenLop', 'siSo', 'khoiLop'],
+            attributes: ['maLop', 'tenLop', 'siSo', 'khoiLop', 'namHoc'],
         });
         return {
             EM: "Get Lops success",
@@ -353,7 +353,8 @@ const createLop = async (data) => {
             maLop: data.maLop,
             tenLop: data.tenLop,
             siSo: 0,
-            khoiLop: data.khoiLop
+            khoiLop: data.khoiLop,
+            namHoc: data.namHoc
         });
         return {
             EM: "Create Lop success",
@@ -384,7 +385,8 @@ const updateLop = async (data) => {
         await db.Lops.update({
             tenLop: data.tenLop,
             siSo: data.siSo,
-            khoiLop: data.khoiLop
+            khoiLop: data.khoiLop,
+            namHoc: data.namHoc
         }, {
             where: { maLop: data.maLop }
         });
