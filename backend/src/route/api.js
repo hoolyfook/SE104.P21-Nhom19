@@ -313,13 +313,13 @@ let initApiRoutes = (app) => {
   /**
    * @swagger
    * /admin/lops:
-   *  get:
-   *  summary: Get all classes
-   *  tags: [Admin]
-   * responses:
-   *  200:
-   *  description: List of classes retrieved successfully
-   * */
+   *   get:
+   *     summary: Get all classes
+   *     tags: [Admin]
+   *     responses:
+   *       200:
+   *         description: List of classes retrieved successfully
+   */
   router.get("/admin/lops", adminController.getLops);
 
   /**
@@ -341,9 +341,8 @@ let initApiRoutes = (app) => {
    *                 type: string
    *               khoiLop:
    *                 type: string
-    *               namHoc:
-    *                type: string
-   * 
+   *               namHoc:
+   *                 type: string
    *     responses:
    *       200:
    *         description: Class created successfully
@@ -1673,6 +1672,20 @@ let initApiRoutes = (app) => {
 *     tags: [HocSinh]
 *     security:
 *       - bearerAuth: [] # Assuming JWT authentication is used
+*     parameters:
+*       - in: query
+*         name: maLop
+*         schema:
+*           type: string
+*         required: true
+*         description: The class ID (maLop) to retrieve the gradebook for
+*       - in: query
+*         name: hocKy
+*         schema:
+*           type: string
+*         required: true
+*         description: The semester (e.g. "I" or "II")
+*         example: "I"
 *     responses:
 *       200:
 *         description: Gradebook retrieved successfully
@@ -1698,9 +1711,6 @@ let initApiRoutes = (app) => {
 *                       hocKy:
 *                         type: string
 *                         example: "I"
-*                       namHoc:
-*                         type: string
-*                         example: "2024-2025"
 *                       diem15p:
 *                         type: number
 *                         format: float
