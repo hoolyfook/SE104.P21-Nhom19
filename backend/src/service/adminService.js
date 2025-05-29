@@ -1170,9 +1170,9 @@ const getBaoCaoLops = async (query) => {
             const classSize = lop.siSo;
             const passRate = (passedStudents / classSize) * 100;
 
-            // Check if a report already exists for the class and hocKy
+            // Check if a report already exists in BaoCaoTongKetHocKys (including namHoc)
             let existingReport = await db.BaoCaoTongKetHocKys.findOne({
-                where: { maLop: lop.maLop, hocKy }
+                where: { maLop: lop.maLop, hocKy, namHoc }
             });
 
             if (existingReport) {
@@ -1182,13 +1182,14 @@ const getBaoCaoLops = async (query) => {
                     soLuongDat: passedStudents,
                     tiLe: passRate,
                 }, {
-                    where: { maLop: lop.maLop, hocKy }
+                    where: { maLop: lop.maLop, hocKy, namHoc }
                 });
             } else {
-                // Create a new record
+                // Create a new record including namHoc
                 await db.BaoCaoTongKetHocKys.create({
                     maLop: lop.maLop,
                     hocKy,
+                    namHoc,
                     siSo: classSize,
                     soLuongDat: passedStudents,
                     tiLe: passRate,
@@ -1196,10 +1197,10 @@ const getBaoCaoLops = async (query) => {
             }
         }
 
-        // Fetch and return all reports for the given hocKy with related class info
+        // Fetch and return all reports for the given hocKy and namHoc with related class info
         let reports = await db.BaoCaoTongKetHocKys.findAll({
-            where: { hocKy },
-            attributes: ['maLop', 'hocKy', 'siSo', 'soLuongDat', 'tiLe'],
+            where: { hocKy, namHoc },
+            attributes: ['maLop', 'hocKy', 'namHoc', 'siSo', 'soLuongDat', 'tiLe'],
             include: [
                 {
                     model: db.Lops,
@@ -1284,9 +1285,9 @@ const getBaoCaoMons = async (query) => {
             // Calculate class pass rate
             const passRate = (passedStudents / classSize) * 100;
 
-            // Check if a record already exists in BaoCaoTongKetMons for this subject, hocKy and class
+            // Check if a record already exists in BaoCaoTongKetMons for this subject, hocKy, class and academic year
             let existingReport = await db.BaoCaoTongKetMons.findOne({
-                where: { maMon, hocKy, maLop: lop.maLop }
+                where: { maMon, hocKy, maLop: lop.maLop, namHoc }
             });
 
             if (existingReport) {
@@ -1296,14 +1297,15 @@ const getBaoCaoMons = async (query) => {
                     soLuongDat: passedStudents,
                     tiLe: passRate,
                 }, {
-                    where: { maMon, hocKy, maLop: lop.maLop }
+                    where: { maMon, hocKy, maLop: lop.maLop, namHoc }
                 });
             } else {
-                // Create a new record
+                // Create a new record including namHoc
                 await db.BaoCaoTongKetMons.create({
                     maMon,
                     hocKy,
                     maLop: lop.maLop,
+                    namHoc,
                     siSo: classSize,
                     soLuongDat: passedStudents,
                     tiLe: passRate,
@@ -1315,6 +1317,7 @@ const getBaoCaoMons = async (query) => {
                 maLop: lop.maLop,
                 maMon,
                 hocKy,
+                namHoc,
                 siSo: classSize,
                 soLuongDat: passedStudents,
                 tiLe: passRate

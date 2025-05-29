@@ -1,7 +1,7 @@
 import hsService from "../service/hocsinhService.js";
 const getBangDiem = async (req, res) => {
     try {
-        const data = await hsService.getBangDiem(req.jwt.id);
+        const data = await hsService.getBangDiem(req.jwt.id, req.query);
         return res.status(200).json({
             EM: data.EM,
             EC: data.EC,
