@@ -10,8 +10,9 @@ const semesters = ["Học kỳ I", "Học kỳ II"];
 const getSchoolYears = () => {
   const currentYear = new Date().getFullYear();
   const years = [];
-  for (let i = 0; i < 5; i++) {
-    years.push(`${currentYear - i}`);
+  for (let i = 0; i < 10; i++) {
+    const year = currentYear - i;
+    years.push(`${year}-${year + 1}`);
   }
   return years;
 };
@@ -45,7 +46,7 @@ const ClassReport = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.get('http://localhost:8080/api/v1/admin/baocao/lops', {
+      const response = await axios.get('/admin/baocao/lops', {
         params: {
           hocKy: semesterToApiValue(selectedSemester),
           namHoc: selectedNamHoc,
@@ -53,10 +54,8 @@ const ClassReport = () => {
         headers: {
           'Content-Type': 'application/json',
           'Accept': '*/*',
-          // Add authorization header if needed
-          // 'Authorization': `Bearer ${localStorage.getItem('token')}`
         },
-        withCredentials: true // Include if using cookies
+        withCredentials: true
       });
 
       console.log("Full API Response:", response); // Debug full response

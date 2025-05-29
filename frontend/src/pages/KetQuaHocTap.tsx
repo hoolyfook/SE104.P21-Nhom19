@@ -1,16 +1,15 @@
 import { useState, useEffect } from "react";
-import axios from '../api/axiosClient';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import axios from "../api/axiosClient";
 import { Card } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 
-const semesters = ["Tất cả", "Học kỳ I", "Học kỳ II"];
+const semesters = ["Học kỳ I", "Học kỳ II"];
+const semesterToApiValue = (s: string) => (s === "Học kỳ I" ? "I" : "II");
 
-interface GradeReport {
+interface Grade {
   maMon: string;
   hocKy: string;
-  namHoc: string;
   diem15p: number;
   diem1Tiet: number;
   diemTB: number;
@@ -19,67 +18,103 @@ interface GradeReport {
   };
 }
 
-const StudentGradeReport = () => {
+interface UserInfo {
+  hoTen: string;
+  gioiTinh: string;
+  ngaySinh: string;
+  email: string;
+  diaChi: string;
+}
+
+interface LopInfo {
+  maLop: string;
+  Lops: {
+    tenLop: string;
+    khoiLop: string;
+  };
+}
+
+const StudentProfileGradeTable = () => {
+  const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
+  const [lopInfo, setLopInfo] = useState<LopInfo | null>(null);
   const [selectedSemester, setSelectedSemester] = useState(semesters[0]);
-  const [grades, setGrades] = useState<GradeReport[]>([]);
-  const [filteredGrades, setFilteredGrades] = useState<GradeReport[]>([]);
+  const [grades, setGrades] = useState<Grade[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Map semester display names to API values
-  const semesterToApiValue = (semester: string) => {
-    if (semester === "Học kỳ I") return "I";
-    if (semester === "Học kỳ II") return "II";
-    return null; // For "Tất cả"
-  };
-
-  // Fetch all grade report data using Axios
-  const fetchGrades = async () => {
-    setLoading(true);
-    setError(null);
+  const fetchUserInfo = async () => {
     try {
-      const response = await axios.get("/hocsinh/bangdiem", {
-        headers: { Accept: "application/json" },
+      const res = await axios.get("/users/info", {
+        headers: { Accept: "*/*" },
+        withCredentials: true,
       });
-      console.log("API Response:", response.data);
-      if (response.data.EC === "0") {
-        setGrades(response.data.DT || []);
+
+      if (res.status === 200 && res.data.EC === "0") {
+        const user = res.data.DT.user;
+        const lop = res.data.DT.lop?.[0]; // lấy lớp đầu tiên
+        setUserInfo(user);
+        setLopInfo(lop);
       } else {
-        throw new Error(response.data.EM || "Lỗi khi tải bảng điểm");
+        throw new Error(res.data.EM || "Không lấy được thông tin người dùng");
       }
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Đã xảy ra lỗi không xác định";
-      console.error("Fetch Error:", errorMessage);
-      setError(errorMessage);
-      setGrades([]);
-    } finally {
-      setLoading(false);
+    } catch (err: any) {
+      console.error("Lỗi lấy thông tin người dùng:", err);
+      setError("Không thể lấy thông tin người dùng");
     }
   };
 
-  // Fetch data on component mount
+  const fetchGrades = async (maLop: string, hocKy: string) => {
+    try {
+      const res = await axios.get("/hocsinh/bangdiem", {
+        params: { maLop, hocKy },
+        headers: { Accept: "*/*" },
+        withCredentials: true,
+      });
+
+      if (res.status === 200 && res.data.EC === "0") {
+        setGrades(res.data.DT || []);
+      } else {
+        throw new Error(res.data.EM || "Lỗi khi tải bảng điểm");
+      }
+    } catch (err: any) {
+      console.error("Lỗi lấy bảng điểm:", err);
+      setGrades([]);
+    }
+  };
+
   useEffect(() => {
-    fetchGrades();
+    fetchUserInfo();
   }, []);
 
-  // Filter grades by selected semester
   useEffect(() => {
-    console.log("Grades:", grades);
-    const semesterValue = semesterToApiValue(selectedSemester);
-    const filtered = semesterValue
-      ? grades.filter((grade) => grade.hocKy === semesterValue)
-      : grades;
-    console.log("Filtered Grades:", filtered);
-    setFilteredGrades(filtered);
-  }, [selectedSemester, grades]);
+    if (lopInfo?.maLop) {
+      fetchGrades(lopInfo.maLop, semesterToApiValue(selectedSemester));
+    }
+  }, [lopInfo, selectedSemester]);
 
   return (
     <div className="min-h-screen p-10">
-      <Card className="p-5 w-full max-w-4xl mx-auto shadow-lg">
-        <h2 className="text-center text-2xl font-bold mb-6">Kết Quả Học Tập</h2>
-        <div className="mb-5 flex items-center gap-4">
+      <Card className="p-6 max-w-4xl mx-auto shadow-xl">
+        <h2 className="text-2xl font-bold text-center mb-6">Bảng Điểm Cá Nhân</h2>
+
+        {userInfo && (
+          <div className="mb-6 bg-gray-50 p-4 rounded border text-sm">
+            <p><strong>Họ tên:</strong> {userInfo.hoTen}</p>
+            <p><strong>Giới tính:</strong> {userInfo.gioiTinh}</p>
+            <p><strong>Ngày sinh:</strong> {new Date(userInfo.ngaySinh).toLocaleDateString()}</p>
+            <p><strong>Email:</strong> {userInfo.email}</p>
+            <p><strong>Địa chỉ:</strong> {userInfo.diaChi}</p>
+            {lopInfo && (
+              <>
+                <p><strong>Lớp:</strong> {lopInfo.Lops.tenLop}</p>
+              </>
+            )}
+          </div>
+        )}
+
+        <div className="mb-4">
           <Select value={selectedSemester} onValueChange={setSelectedSemester}>
-            <SelectTrigger className="w-full max-w-xs bg-gray-100">
+            <SelectTrigger className="w-48 bg-gray-100">
               <SelectValue placeholder="Chọn học kỳ" />
             </SelectTrigger>
             <SelectContent>
@@ -90,55 +125,43 @@ const StudentGradeReport = () => {
               ))}
             </SelectContent>
           </Select>
-          <Button onClick={fetchGrades} className="bg-blue-500 text-white">
-            Làm mới
-          </Button>
         </div>
 
-        {loading && <p className="text-center">Đang tải...</p>}
-        {error && (
-          <p className="text-center text-red-500">
-            {error} <Button onClick={fetchGrades} variant="link">Thử lại</Button>
-          </p>
+        {error && <div className="text-red-600 mb-4">{error}</div>}
+
+        {!error && grades.length === 0 && (
+          <div className="text-center text-gray-500">Không có dữ liệu bảng điểm.</div>
         )}
-        {!loading && !error && filteredGrades.length === 0 && (
-          <p className="text-center">
-            Không có dữ liệu bảng điểm {selectedSemester === "Tất cả" ? "" : `cho ${selectedSemester}`}.
-          </p>
-        )}
-        {!loading && !error && filteredGrades.length > 0 && (
-          <Table>
-            <TableHeader>
-              <TableRow className="bg-gray-200">
-                <TableHead className="text-center">STT</TableHead>
-                <TableHead className="text-center">Mã Môn</TableHead>
-                <TableHead className="text-center">Tên Môn</TableHead>
-                <TableHead className="text-center">Học Kỳ</TableHead>
-                <TableHead className="text-center">Năm Học</TableHead>
-                <TableHead className="text-center">Điểm 15’</TableHead>
-                <TableHead className="text-center">Điểm 1 Tiết</TableHead>
-                <TableHead className="text-center">Điểm TB</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredGrades.map((grade, index) => (
-                <TableRow key={grade.maMon}>
-                  <TableCell className="text-center">{index + 1}</TableCell>
-                  <TableCell className="text-center">{grade.maMon}</TableCell>
-                  <TableCell className="text-center">{grade.MonHocs.tenMon}</TableCell>
-                  <TableCell className="text-center">{grade.hocKy}</TableCell>
-                  <TableCell className="text-center">{grade.namHoc}</TableCell>
-                  <TableCell className="text-center">{grade.diem15p.toFixed(1)}</TableCell>
-                  <TableCell className="text-center">{grade.diem1Tiet.toFixed(1)}</TableCell>
-                  <TableCell className="text-center">{grade.diemTB.toFixed(1)}</TableCell>
+
+        {!error && grades.length > 0 && (
+          <div className="overflow-x-auto">
+            <Table className="min-w-full">
+              <TableHeader>
+                <TableRow className="bg-gray-200">
+                  <TableHead className="text-center">STT</TableHead>
+                  <TableHead className="text-center">Môn Học</TableHead>
+                  <TableHead className="text-center">Điểm 15'</TableHead>
+                  <TableHead className="text-center">Điểm 1 Tiết</TableHead>
+                  <TableHead className="text-center">Điểm TB</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {grades.map((g, idx) => (
+                  <TableRow key={`${g.maMon}-${idx}`}>
+                    <TableCell className="text-center">{idx + 1}</TableCell>
+                    <TableCell className="text-center">{g.MonHocs?.tenMon || g.maMon}</TableCell>
+                    <TableCell className="text-center">{g.diem15p}</TableCell>
+                    <TableCell className="text-center">{g.diem1Tiet}</TableCell>
+                    <TableCell className="text-center">{g.diemTB.toFixed(2)}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
         )}
       </Card>
     </div>
   );
 };
 
-export default StudentGradeReport;
+export default StudentProfileGradeTable;
