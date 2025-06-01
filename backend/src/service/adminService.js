@@ -1347,6 +1347,56 @@ const getBaoCaoMons = async (query) => {
         };
     }
 }
+const getKetQuaHocSinh = async () => {
+    try {
+        // Lấy tất cả bảng điểm với các trường: maHS, hocKy, diemTB
+        let bangdiems = await db.BangDiems.findAll({
+            attributes: ['maHS', 'hocKy', 'diemTB']
+        });
+        if (!bangdiems || bangdiems.length === 0) {
+            return {
+                EM: "No scores found",
+                EC: "-1",
+                DT: []
+            };
+        }
+
+        // Nhóm theo maHS và sau đó theo học kỳ (I và II)
+        let studentData = {};
+        bangdiems.forEach(record => {
+            const { maHS, hocKy, diemTB } = record;
+            if (!studentData[maHS]) {
+                studentData[maHS] = { "I": [], "II": [] };
+            }
+            if (hocKy === "I" || hocKy === "II") {
+                studentData[maHS][hocKy].push(diemTB);
+            }
+        });
+
+        // Tính trung bình điểm cho mỗi học sinh theo từng học kỳ
+        let result = [];
+        for (let maHS in studentData) {
+            let semI = studentData[maHS]["I"];
+            let semII = studentData[maHS]["II"];
+            let avgI = semI.length > 0 ? semI.reduce((sum, val) => sum + (val || 0), 0) / semI.length : null;
+            let avgII = semII.length > 0 ? semII.reduce((sum, val) => sum + (val || 0), 0) / semII.length : null;
+            result.push({ maHS, avgI, avgII });
+        }
+
+        return {
+            EM: "Get Ket Qua Hoc Sinh success",
+            EC: "0",
+            DT: result
+        };
+    } catch (e) {
+        console.log(e);
+        return {
+            EM: "Error from server",
+            EC: "-1",
+            DT: []
+        };
+    }
+};
 const adminService = {
     getUsers,
     createUser,
@@ -1375,7 +1425,8 @@ const adminService = {
     getBaoCaoKy,
     deleteBaoCaoKy,
     getBaoCaoLops,
-    getBaoCaoMons
+    getBaoCaoMons,
+    getKetQuaHocSinh
 };
 
 export default adminService;
