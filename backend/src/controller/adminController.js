@@ -484,6 +484,23 @@ const getBaoCaoMons = async (req, res) => {
         })
     }
 }
+const getKetQuaHocSinh = async (req, res) => {
+    try {
+        let data = await adminService.getKetQuaHocSinh();
+        return res.status(200).json({
+            EM: data.EM,
+            EC: data.EC,
+            DT: data.DT
+        })
+    } catch (e) {
+        console.log(e)
+        return res.status(500).json({
+            EM: "Error from server",
+            EC: "-1",
+            DT: ""
+        })
+    }
+}
 const adminController = {
     getUsers,
     createUser,
@@ -512,7 +529,7 @@ const adminController = {
     getBaoCaoKy,
     deleteBaoCaoKy,
     getBaoCaoLops,
-    getBaoCaoMons
-
+    getBaoCaoMons,
+    getKetQuaHocSinh
 }
 export default adminController;
