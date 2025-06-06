@@ -13,6 +13,9 @@ import {
   SelectContent,
   SelectItem
 } from "@/components/ui/select";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+
 
 export default function ClassList() {
   const [classList, setClassList] = useState<any[]>([]);
@@ -31,6 +34,51 @@ export default function ClassList() {
       alert('Lỗi khi tải danh sách lớp');
     }
   };
+
+const exportClassToPDF = () => {
+  if (!selectedClass || students.length === 0) {
+    alert("Chưa có lớp hoặc danh sách học sinh trống!");
+    return;
+  }
+
+  const doc = new jsPDF();
+
+    // Header
+    doc.setFontSize(14);
+    doc.text("BM2: Danh Sách Lớp", 14, 20);
+
+    doc.setFontSize(12);
+    doc.text(`Lớp: ${selectedClass}`, 14, 30);
+    doc.text(`Sĩ số: ${students.length}`, 150, 30);
+
+    // Table
+    const tableData = students.map((s, index) => [
+      index + 1,
+      s.Users.hoTen,
+      s.Users.gioiTinh,
+      new Date(s.Users.ngaySinh).getFullYear(),
+      s.Users.diaChi
+    ]);
+
+    autoTable(doc, {
+      startY: 40,
+      head: [["STT", "Họ Tên", "Giới Tính", "Năm Sinh", "Địa Chỉ"]],
+      body: tableData,
+      styles: {
+        font: "helvetica",
+        fontSize: 10,
+      },
+      headStyles: {
+        fillColor: [22, 160, 133],
+        textColor: 255,
+        halign: "center"
+      },
+    });
+
+    // Xuất file
+    doc.save(`Danh_sach_lop_${selectedClass}.pdf`);
+  };
+
 
   const fetchStudentsInClass = async (maLop: string) => {
     try {
@@ -220,7 +268,7 @@ export default function ClassList() {
               <TableHead>Giới tính</TableHead>
               <TableHead>Ngày sinh</TableHead>
               <TableHead>Địa chỉ</TableHead>
-              <TableHead>Hành động</TableHead> {/* Thêm cột mới */}
+              <TableHead>Hành động</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -229,7 +277,7 @@ export default function ClassList() {
                 <TableCell>{s.maHS}</TableCell>
                 <TableCell>{s.Users.hoTen}</TableCell>
                 <TableCell>{s.Users.gioiTinh}</TableCell>
-                <TableCell>{s.Users.ngaySinh}</TableCell>
+                <TableCell>{new Date(s.Users.ngaySinh).toLocaleDateString('vi-VN')}</TableCell>
                 <TableCell>{s.Users.diaChi}</TableCell>
                 <TableCell>
                   <Button variant="destructive" size="sm" onClick={() => handleDeleteStudent(s.id)}>
@@ -239,7 +287,13 @@ export default function ClassList() {
               </TableRow>
             ))}
           </TableBody>
-
+            {selectedClass && students.length > 0 && (
+              <div className="flex justify-end mb-2">
+                <Button variant="outline" onClick={exportClassToPDF}>
+                  Xuất PDF
+                </Button>
+              </div>
+            )}
           </Table>
         )}
       </CardContent>

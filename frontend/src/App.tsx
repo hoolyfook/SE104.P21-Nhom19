@@ -13,6 +13,7 @@ import DanhSachQuyDinh from "./pages/DanhSachQuyDinh";
 import DanhSachMonHoc from "./pages/DanhSachMonHoc";
 import PhanCongGiangVien from "./pages/PhanCongGiangVien";
 import KetQuaHocTap from "./pages/KetQuaHocTap";
+import { AuthProvider } from "./context/AuthContext";
 
 function Layout() {
   const location = useLocation();
@@ -43,7 +44,9 @@ function Layout() {
 export default function App() {
   return (
     <Router>
-      <Layout />
+      <AuthProvider>
+        <Layout />
+      </AuthProvider>
     </Router>
   );
 }

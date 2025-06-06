@@ -22,26 +22,25 @@ export default function LoginForm() {
 
   const [loading, setLoading] = useState(false);
 
-  const onSubmit = (data: any) => {
+  const onSubmit = async (data: any) => {
     setLoading(true);
     try {
-      axios.post("/users/login", data, {
+      const response = await axios.post("/users/login", data, {
         withCredentials: true,
-      })
-      .then((response) => {
-        console.log('Login response:', response.data); // Kiểm tra cookie
-      })
-      .catch((error) => {
-        console.error('Login failed:', error.response?.data || error.message);
       });
-    } catch (error) {
-      console.error('Error:', error);
-    }
-    setTimeout(() => {
-      setLoading(false);
+
+      console.log('Login response:', response.data);
+
+      // ✅ Điều hướng sau khi login thành công
       navigate("/profile");
-    }, 10);
+    } catch (error: any) {
+      console.error("Login failed:", error?.response?.data || error.message);
+      alert("Đăng nhập thất bại. Vui lòng kiểm tra thông tin!");
+    } finally {
+      setLoading(false);
+    }
   };
+
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
       <Card className="w-full max-w-sm p-6 shadow-lg bg-white">

@@ -12,6 +12,9 @@ interface Diem {
   diem15p: number;
   diem1Tiet: number;
   diemTB: number;
+  Users: {
+    hoTen: string;
+  };
 }
 
 interface PhanCong {
@@ -53,6 +56,7 @@ export default function BangDiemComponent() {
         },
         headers: { accept: 'application/json' }
       });
+      console.log('Bảng điểm:', res.data.DT);
       setBangDiem(res.data.DT || []);
     } catch (err) {
       alert('Lỗi khi lấy bảng điểm');
@@ -86,7 +90,7 @@ export default function BangDiemComponent() {
           <SelectContent>
             {phanCongList.map((pc, idx) => (
               <SelectItem key={idx} value={`${pc.maLop}_${pc.maMon}`}>
-                {pc.tenLop} - {pc.tenMon}
+                {pc.maLop} - {pc.maMon}
               </SelectItem>
             ))}
           </SelectContent>
@@ -101,7 +105,7 @@ export default function BangDiemComponent() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Mã SV</TableHead>
+                <TableHead>Mã HS</TableHead>
                 <TableHead>Họ tên</TableHead>
                 <TableHead>Điểm 15p</TableHead>
                 <TableHead>Điểm 1 tiết</TableHead>
@@ -111,8 +115,8 @@ export default function BangDiemComponent() {
             <TableBody>
               {bangDiem.map(diem => (
                 <TableRow key={diem.id}>
-                  <TableCell>{diem.maSV}</TableCell>
-                  <TableCell>{diem.hoTen}</TableCell>
+                  <TableCell>{diem.id}</TableCell>
+                  <TableCell>{diem.Users.hoTen}</TableCell>
                   <TableCell>
                     <Input
                       type="number"
