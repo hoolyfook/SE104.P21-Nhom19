@@ -1,24 +1,19 @@
-# Use a valid Node.js LTS version
 FROM node:20.11.0
 
-# Set working directory
 WORKDIR /app
 
-# Copy package.json and package-lock.json for caching
+# Install bash + dos2unix
+RUN apt-get update && apt-get install -y bash dos2unix
+
+# Copy and convert entrypoint.sh first
+COPY entrypoint.sh /app/entrypoint.sh
+RUN dos2unix /app/entrypoint.sh && chmod +x /app/entrypoint.sh
+
+# Then copy the rest
 COPY package*.json ./
-
-# Install dependencies
 RUN npm install
-
-# Copy the rest of the application code
 COPY . .
 
-# Expose the backend port
 EXPOSE 8080
 
-# Create and set permissions for entrypoint script
-COPY entrypoint.sh /app/entrypoint.sh
-RUN chmod +x /app/entrypoint.sh
-
-# Use entrypoint to handle DB initialization and start the app
 ENTRYPOINT ["/app/entrypoint.sh"]

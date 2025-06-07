@@ -21,8 +21,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [role, setRole] = useState<string | null>(null);
 
   useEffect(() => {
-    const stored = localStorage.getItem("user");
-    if (stored) setUser(JSON.parse(stored));
+    try {
+      const stored = localStorage.getItem("user");
+      if (stored && stored !== "undefined") {
+        const parsed = JSON.parse(stored);
+        if (parsed?.name && parsed?.avatarUrl) {
+          setUser(parsed);
+        } else {
+          throw new Error("Invalid user shape");
+        }
+      }
+    } catch (err) {
+      console.warn("Failed to load user from localStorage. Clearing corrupted data.");
+      localStorage.removeItem("user");
+      setUser(null);
+    }
 
     const fetchRole = async () => {
       try {
@@ -35,6 +48,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     fetchRole();
   }, []);
+
 
   return (
     <AuthContext.Provider value={{ user, role, setUser, setRole }}>

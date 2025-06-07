@@ -9,15 +9,28 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    } else {
+    const storedUser = localStorage?.getItem("user");
+
+    try {
+      if (storedUser && storedUser !== "undefined") {
+        const parsedUser = JSON.parse(storedUser);
+        if (parsedUser?.name && parsedUser?.avatarUrl) {
+          setUser(parsedUser);
+        } else {
+          throw new Error("Invalid user object");
+        }
+      } else {
+        throw new Error("User not found in localStorage");
+      }
+    } catch (error) {
+      console.warn("Invalid or missing user in localStorage, setting fallback user.");
+
       const tempUser = {
         name: "Người dùng",
         avatarUrl:
           "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT9MagkuGc5nFUrjBzZ-V8R93ntAPXpQd_2_A&s",
       };
+
       localStorage.setItem("user", JSON.stringify(tempUser));
       setUser(tempUser);
     }
@@ -26,7 +39,7 @@ export default function Navbar() {
     const fetchRole = async () => {
       try {
         const response = await axios.get('/users/role', {
-          withCredentials: true, // Đảm bảo cookie được gửi kèm theo request
+          withCredentials: true,
         });
         console.log(response.data.DT.GroupUsers.name);
         setRoleUser(response.data.DT.GroupUsers.name);
@@ -34,8 +47,10 @@ export default function Navbar() {
         console.error("Error fetching user role:", error);
       }
     };
+
     fetchRole();
   }, []);
+
 
   const handleLogout = async () => {
     try {
