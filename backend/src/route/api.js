@@ -989,61 +989,64 @@ let initApiRoutes = (app) => {
    */
   router.get("/admin/baocao/mon", adminController.getBaoCaoMons);
   /**
-   * @swagger
-   * /admin/hocsinhs/ketqua:
-   *   get:
-   *     summary: Lấy kết quả học sinh (điểm trung bình của học kỳ I và học kỳ II)
-   *     tags: [Admin]
-   *     security:
-   *       - bearerAuth: []  # Giả sử sử dụng xác thực JWT
-   *     responses:
-   *       200:
-   *         description: Kết quả học sinh được lấy thành công
-   *         content:
-   *           application/json:
-   *             schema:
-   *               type: object
-   *               properties:
-   *                 EM:
-   *                   type: string
-   *                   example: "Get Ket Qua Hoc Sinh success"
-   *                 EC:
-   *                   type: string
-   *                   example: "0"
-   *                 DT:
-   *                   type: array
-   *                   items:
-   *                     type: object
-   *                     properties:
-   *                       maHS:
-   *                         type: string
-   *                         example: "101"
-   *                       avgI:
-   *                         type: number
-   *                         format: float
-   *                         example: 7.8
-   *                       avgII:
-   *                         type: number
-   *                         format: float
-   *                         example: 8.2
-   *       500:
-   *         description: Lỗi từ server
-   *         content:
-   *           application/json:
-   *             schema:
-   *               type: object
-   *               properties:
-   *                 EM:
-   *                   type: string
-   *                   example: "Error from server"
-   *                 EC:
-   *                   type: string
-   *                   example: "-1"
-   *                 DT:
-   *                   type: array
-   *                   items:
-   *                     type: string
-   */
+ * @swagger
+ * /admin/hocsinhs/ketqua:
+ *   get:
+ *     summary: Lấy kết quả học tập của học sinh (bao gồm điểm trung bình học kỳ I, học kỳ II và tên lớp)
+ *     tags: [Admin]
+ *     security:
+ *       - bearerAuth: []  # Giả sử sử dụng xác thực JWT
+ *     responses:
+ *       200:
+ *         description: Kết quả học tập của học sinh được lấy thành công
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 EM:
+ *                   type: string
+ *                   example: "Get Ket Qua Hoc Sinh success"
+ *                 EC:
+ *                   type: string
+ *                   example: "0"
+ *                 DT:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       maHS:
+ *                         type: string
+ *                         example: "101"
+ *                       tenLop:
+ *                         type: string
+ *                         example: "Class 10A1"
+ *                       avgI:
+ *                         type: number
+ *                         format: float
+ *                         example: 7.8
+ *                       avgII:
+ *                         type: number
+ *                         format: float
+ *                         example: 8.2
+ *       500:
+ *         description: Lỗi từ server
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 EM:
+ *                   type: string
+ *                   example: "Error from server"
+ *                 EC:
+ *                   type: string
+ *                   example: "-1"
+ *                 DT:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ */
   router.get("/admin/hocsinhs/ketqua", adminController.getKetQuaHocSinh);
   // Giang Vien
 
