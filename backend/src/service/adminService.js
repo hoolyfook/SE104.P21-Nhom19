@@ -1349,9 +1349,17 @@ const getBaoCaoMons = async (query) => {
 }
 const getKetQuaHocSinh = async () => {
     try {
-        // Lấy tất cả bảng điểm với các trường: maHS, hocKy, diemTB
+        // Lấy tất cả bảng điểm với các trường: maHS, hocKy, diemTB và maLop,
+        // đồng thời include bảng Lops để lấy tên lớp
         let bangdiems = await db.BangDiems.findAll({
-            attributes: ['maHS', 'hocKy', 'diemTB']
+            attributes: ['maHS', 'hocKy', 'diemTB', 'maLop'],
+            include: [
+                {
+                    model: db.Lops,
+                    as: 'Lops',
+                    attributes: ['tenLop'],
+                }
+            ],
         });
         if (!bangdiems || bangdiems.length === 0) {
             return {
@@ -1361,7 +1369,7 @@ const getKetQuaHocSinh = async () => {
             };
         }
 
-        // Nhóm theo maHS và sau đó theo học kỳ (I và II)
+        // Nhóm theo maHS
         let studentData = {};
         bangdiems.forEach(record => {
             const { maHS, hocKy, diemTB } = record;
@@ -1373,14 +1381,18 @@ const getKetQuaHocSinh = async () => {
             }
         });
 
-        // Tính trung bình điểm cho mỗi học sinh theo từng học kỳ
+        // Tính trung bình điểm cho học kỳ của mỗi học sinh và 
+        // tìm tên lớp từ bản ghi đầu tiên của mỗi học sinh
         let result = [];
         for (let maHS in studentData) {
             let semI = studentData[maHS]["I"];
             let semII = studentData[maHS]["II"];
             let avgI = semI.length > 0 ? semI.reduce((sum, val) => sum + (val || 0), 0) / semI.length : null;
             let avgII = semII.length > 0 ? semII.reduce((sum, val) => sum + (val || 0), 0) / semII.length : null;
-            result.push({ maHS, avgI, avgII });
+            // Lấy tên lớp từ bản ghi đầu tiên khớp với maHS
+            let record = bangdiems.find(item => item.maHS === maHS);
+            let tenLop = record && record.Lops ? record.Lops.tenLop : null;
+            result.push({ maHS, tenLop, avgI, avgII });
         }
 
         return {
