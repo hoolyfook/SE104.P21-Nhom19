@@ -280,71 +280,160 @@ module.exports = {
                 updatedAt: new Date(),
             },
         ]);
+        // Insert Users (1 admin and 10 teachers)
         await queryInterface.bulkInsert('Users', [
+            // Admin
             {
-                hoTen: 'Nguyễn Thị A',
-                gioiTinh: 'Female',
-                ngaySinh: '2005-04-01', // 2005 -> 15 years old in 2020
+                hoTen: 'Admin User',
+                gioiTinh: 'Male',
+                ngaySinh: '1980-01-01',
                 diaChi: 'Hanoi, Vietnam',
-                email: 'nguyen.a@example.com',
-                mk: 'password123',
-                groupUserId: 1, // Reference a group from GroupUsers
+                email: 'admin@example.com',
+                mk: 'securepassword',
+                groupUserId: 1, // admin group
                 createdAt: new Date(),
                 updatedAt: new Date(),
             },
+            // Teacher 1
             {
-                hoTen: 'Tran Minh B',
-                gioiTinh: 'Male',
-                ngaySinh: '2004-08-15', // 2004 -> 16 years old in 2020
-                diaChi: 'Ho Chi Minh, Vietnam',
-                email: 'tran.b1@example.com',
-                mk: 'password123',
-                groupUserId: 2, // Reference a group from GroupUsers
-                createdAt: new Date(),
-                updatedAt: new Date(),
-            },
-            {
-                hoTen: 'Tran Van B',
-                gioiTinh: 'Male',
-                ngaySinh: '2004-08-15', // 2004 -> 16 years old in 2020
-                diaChi: 'Ho Chi Minh, Vietnam',
-                email: 'tran.b2@example.com',
-                mk: 'password123',
-                groupUserId: 2, // Reference a group from GroupUsers
-                createdAt: new Date(),
-                updatedAt: new Date(),
-            },
-            {
-                hoTen: 'Le Thi C',
+                hoTen: 'Teacher 1',
                 gioiTinh: 'Female',
-                ngaySinh: '2001-11-25', // 2001 -> 19 years old in 2020
-                diaChi: 'Da Nang, Vietnam',
-                email: 'le.c1@example.com',
-                mk: 'password123',
-                groupUserId: 3, // Reference a group from GroupUsers
+                ngaySinh: '1985-05-01',
+                diaChi: 'Hanoi, Vietnam',
+                email: 'teacher1@example.com',
+                mk: 'securepassword',
+                groupUserId: 2, // teacher group
                 createdAt: new Date(),
                 updatedAt: new Date(),
             },
+            // Teacher 2
             {
-                hoTen: 'Le Van C',
+                hoTen: 'Teacher 2',
+                gioiTinh: 'Male',
+                ngaySinh: '1984-06-15',
+                diaChi: 'Hanoi, Vietnam',
+                email: 'teacher2@example.com',
+                mk: 'securepassword',
+                groupUserId: 2,
+                createdAt: new Date(),
+                updatedAt: new Date(),
+            },
+            // Teacher 3
+            {
+                hoTen: 'Teacher 3',
                 gioiTinh: 'Female',
-                ngaySinh: '2001-11-25', // 2001 -> 19 years old in 2020
-                diaChi: 'Da Nang, Vietnam',
-                email: 'le.c2@example.com',
-                mk: 'password123',
-                groupUserId: 3, // Reference a group from GroupUsers
+                ngaySinh: '1987-03-22',
+                diaChi: 'Hanoi, Vietnam',
+                email: 'teacher3@example.com',
+                mk: 'securepassword',
+                groupUserId: 2,
+                createdAt: new Date(),
+                updatedAt: new Date(),
+            },
+            // Teacher 4
+            {
+                hoTen: 'Teacher 4',
+                gioiTinh: 'Male',
+                ngaySinh: '1982-11-05',
+                diaChi: 'Hanoi, Vietnam',
+                email: 'teacher4@example.com',
+                mk: 'securepassword',
+                groupUserId: 2,
+                createdAt: new Date(),
+                updatedAt: new Date(),
+            },
+            // Teacher 5
+            {
+                hoTen: 'Teacher 5',
+                gioiTinh: 'Female',
+                ngaySinh: '1986-07-12',
+                diaChi: 'Hanoi, Vietnam',
+                email: 'teacher5@example.com',
+                mk: 'securepassword',
+                groupUserId: 2,
+                createdAt: new Date(),
+                updatedAt: new Date(),
+            },
+            // Teacher 6
+            {
+                hoTen: 'Teacher 6',
+                gioiTinh: 'Male',
+                ngaySinh: '1983-09-30',
+                diaChi: 'Hanoi, Vietnam',
+                email: 'teacher6@example.com',
+                mk: 'securepassword',
+                groupUserId: 2,
+                createdAt: new Date(),
+                updatedAt: new Date(),
+            },
+            // Teacher 7
+            {
+                hoTen: 'Teacher 7',
+                gioiTinh: 'Female',
+                ngaySinh: '1988-02-18',
+                diaChi: 'Hanoi, Vietnam',
+                email: 'teacher7@example.com',
+                mk: 'securepassword',
+                groupUserId: 2,
+                createdAt: new Date(),
+                updatedAt: new Date(),
+            },
+            // Teacher 8
+            {
+                hoTen: 'Teacher 8',
+                gioiTinh: 'Male',
+                ngaySinh: '1985-12-03',
+                diaChi: 'Hanoi, Vietnam',
+                email: 'teacher8@example.com',
+                mk: 'securepassword',
+                groupUserId: 2,
+                createdAt: new Date(),
+                updatedAt: new Date(),
+            },
+            // Teacher 9
+            {
+                hoTen: 'Teacher 9',
+                gioiTinh: 'Female',
+                ngaySinh: '1987-04-21',
+                diaChi: 'Hanoi, Vietnam',
+                email: 'teacher9@example.com',
+                mk: 'securepassword',
+                groupUserId: 2,
+                createdAt: new Date(),
+                updatedAt: new Date(),
+            },
+            // Teacher 10
+            {
+                hoTen: 'Teacher 10',
+                gioiTinh: 'Male',
+                ngaySinh: '1986-08-09',
+                diaChi: 'Hanoi, Vietnam',
+                email: 'teacher10@example.com',
+                mk: 'securepassword',
+                groupUserId: 2,
                 createdAt: new Date(),
                 updatedAt: new Date(),
             },
         ]);
         // Insert Lops
+        // Insert Lops với mỗi khối có 2 lớp
         await queryInterface.bulkInsert('Lops', [
             {
                 maLop: '10A1',
                 tenLop: 'Class 10A1',
                 khoiLop: '10',
-                siSo: 1, // Within the limit of 40 students per class (QĐ2)
+                siSo: 30, // Sĩ số mẫu
                 chuNhiem: 2, // Reference a User ID (Teacher)
+                namHoc: '2020-2021',
+                createdAt: new Date(),
+                updatedAt: new Date(),
+            },
+            {
+                maLop: '10A2',
+                tenLop: 'Class 10A2',
+                khoiLop: '10',
+                siSo: 30,
+                chuNhiem: 3,
                 namHoc: '2020-2021',
                 createdAt: new Date(),
                 updatedAt: new Date(),
@@ -353,8 +442,39 @@ module.exports = {
                 maLop: '11A1',
                 tenLop: 'Class 11A1',
                 khoiLop: '11',
-                siSo: 1, // Within the limit of 40 students per class (QĐ2)
-                chuNhiem: 3, // Reference a User ID (Teacher)
+                siSo: 30,
+                chuNhiem: 4,
+                namHoc: '2020-2021',
+                createdAt: new Date(),
+                updatedAt: new Date(),
+            },
+            {
+                maLop: '11A2',
+                tenLop: 'Class 11A2',
+                khoiLop: '11',
+                siSo: 30,
+                chuNhiem: 5,
+                namHoc: '2020-2021',
+                createdAt: new Date(),
+                updatedAt: new Date(),
+            },
+            // Nếu cần thêm các khối khác, ví dụ khối 12
+            {
+                maLop: '12A1',
+                tenLop: 'Class 12A1',
+                khoiLop: '12',
+                siSo: 30,
+                chuNhiem: 6,
+                namHoc: '2020-2021',
+                createdAt: new Date(),
+                updatedAt: new Date(),
+            },
+            {
+                maLop: '12A2',
+                tenLop: 'Class 12A2',
+                khoiLop: '12',
+                siSo: 30,
+                chuNhiem: 7,
                 namHoc: '2020-2021',
                 createdAt: new Date(),
                 updatedAt: new Date(),
@@ -362,67 +482,79 @@ module.exports = {
         ]);
 
         // Insert MonHocs
+        // Insert 5 môn học (Toán, Lý, Hóa, Văn, Anh)
         await queryInterface.bulkInsert('MonHocs', [
             {
-                maMon: 'Math',
-                tenMon: 'Mathematics',
+                maMon: 'Toan',
+                tenMon: 'Toán',
                 createdAt: new Date(),
                 updatedAt: new Date(),
             },
             {
-                maMon: 'Physics',
-                tenMon: 'Physics',
+                maMon: 'Ly',
+                tenMon: 'Lý',
+                createdAt: new Date(),
+                updatedAt: new Date(),
+            },
+            {
+                maMon: 'Hoa',
+                tenMon: 'Hóa',
+                createdAt: new Date(),
+                updatedAt: new Date(),
+            },
+            {
+                maMon: 'Van',
+                tenMon: 'Văn',
+                createdAt: new Date(),
+                updatedAt: new Date(),
+            },
+            {
+                maMon: 'Anh',
+                tenMon: 'Anh',
                 createdAt: new Date(),
                 updatedAt: new Date(),
             },
         ]);
 
-        // Insert GiangVien_Lop_Mons
-        await queryInterface.bulkInsert('GiangVien_Lop_Mons', [
-            {
-                maGV: 2, // Reference a User ID (Teacher)
-                maLop: '10A1',
-                maMon: 'Math',
-                createdAt: new Date(),
-                updatedAt: new Date(),
-            },
-            {
-                maGV: 2, // Reference another User ID (Teacher)
-                maLop: '11A1',
-                maMon: 'Math',
-                createdAt: new Date(),
-                updatedAt: new Date(),
-            },
-            {
-                maGV: 3, // Reference a User ID (Teacher)
-                maLop: '11A1',
-                maMon: 'Physics',
-                createdAt: new Date(),
-                updatedAt: new Date(),
-            },
-            {
-                maGV: 3, // Reference a User ID (Teacher)
-                maLop: '10A1',
-                maMon: 'Physics',
-                createdAt: new Date(),
-                updatedAt: new Date(),
-            },
-        ]);
+        // Phân công giảng viên cho mỗi môn và cho 6 lớp
+        // Giả sử các giáo viên đã tạo có id như sau:
+        // Toán: [2, 3]
+        // Lý: [4, 5]
+        // Hóa: [6, 7]
+        // Văn: [8, 9]
+        // Anh: [10, 11]
 
-        // Insert BangDiems
-        await queryInterface.bulkInsert('BangDiems', [
-            {
-                maHS: 4, // Reference a User ID (Student)
-                maLop: '10A1',
-                maMon: 'Math',
-                hocKy: 'I',
-                diem15p: 8.5,
-                diem1Tiet: 7.0,
-                diemTB: 7.5, // Average score
-                createdAt: new Date(),
-                updatedAt: new Date(),
-            },
-        ]);
+        // Danh sách các lớp (đã chèn tại bảng Lops)
+        const classes = ['10A1', '10A2', '11A1', '11A2', '12A1', '12A2'];
+
+        // Bản đồ phân công môn học -> mảng id giáo viên
+        const subjectTeacherMap = {
+            'Toan': [2, 3],
+            'Ly': [4, 5],
+            'Hoa': [6, 7],
+            'Van': [8, 9],
+            'Anh': [10, 11],
+        };
+
+        let giangvienLopMons = [];
+
+        // Với mỗi môn, với mỗi lớp và mỗi giáo viên phân công, tạo record trong GiangVien_Lop_Mons
+        for (const subject in subjectTeacherMap) {
+            const teacherIds = subjectTeacherMap[subject];
+            for (const lop of classes) {
+                for (const teacherId of teacherIds) {
+                    giangvienLopMons.push({
+                        maGV: teacherId,
+                        maLop: lop,
+                        maMon: subject,
+                        createdAt: new Date(),
+                        updatedAt: new Date(),
+                    });
+                }
+            }
+        }
+
+        await queryInterface.bulkInsert('GiangVien_Lop_Mons', giangvienLopMons);
 
         // Insert QuyDinhs
         await queryInterface.bulkInsert('QuyDinhs', [
@@ -458,21 +590,78 @@ module.exports = {
             },
         ]);
 
-        // Insert HocSinh_Lops
-        await queryInterface.bulkInsert('HocSinh_Lops', [
-            {
-                maHS: 4, // Reference a Student
-                maLop: '10A1',
-                createdAt: new Date(),
-                updatedAt: new Date(),
-            },
-            {
-                maHS: 5, // Reference a Student
-                maLop: '11A1',
-                createdAt: new Date(),
-                updatedAt: new Date(),
-            },
-        ]);
+        let studentRecords = [];
+        let hocSinhLopRecords = [];
+        let studentCounter = 1; // Dùng để đánh số học sinh trong mảng tạo mới
+
+        for (const malop of classes) {
+            for (let i = 0; i < 40; i++) {
+                // Tạo thông tin học sinh (name, email, giới tính, ...)
+                let studentName = `Student ${malop} ${i + 1}`;
+                let email = `student${studentCounter}@example.com`;
+                let newStudent = {
+                    hoTen: studentName,
+                    gioiTinh: (i % 2 === 0 ? 'Male' : 'Female'),
+                    ngaySinh: '2005-01-01',
+                    diaChi: 'Hanoi, Vietnam',
+                    email: email,
+                    mk: 'studentpassword',
+                    groupUserId: 3, // giả sử groupUserId = 3 dành cho học sinh
+                    createdAt: new Date(),
+                    updatedAt: new Date(),
+                };
+                studentRecords.push(newStudent);
+
+                // Giả sử các học sinh mới được tạo sẽ có id tự động bắt đầu từ 12
+                // => id của học sinh thứ studentCounter sẽ là (studentCounter + 11)
+                let newAssignment = {
+                    maHS: studentCounter + 11,
+                    maLop: malop,
+                    createdAt: new Date(),
+                    updatedAt: new Date(),
+                };
+                hocSinhLopRecords.push(newAssignment);
+
+                studentCounter++;
+            }
+        }
+
+        // Chèn các học sinh mới vào bảng Users
+        await queryInterface.bulkInsert('Users', studentRecords);
+
+        // Chèn phân công vào bảng HocSinh_Lops
+        await queryInterface.bulkInsert('HocSinh_Lops', hocSinhLopRecords);
+        // --- Tạo bảng điểm cho tất cả học sinh ---
+        // Danh sách các môn học và học kỳ
+        const subjects = ['Toan', 'Ly', 'Hoa', 'Van', 'Anh'];
+        const semesters = ['I', 'II'];
+
+        // Giả sử hocSinhLopRecords đã được tạo ở phần trước (mỗi record có { maHS, maLop })
+        let bangdiemRecords = [];
+
+        // Với mỗi học sinh được phân công trong bảng HocSinh_Lops,
+        // tạo bảng điểm cho từng môn và từng học kỳ
+        for (const record of hocSinhLopRecords) {
+            const { maHS, maLop } = record;
+            for (const subject of subjects) {
+                for (const sem of semesters) {
+                    bangdiemRecords.push({
+                        maHS: maHS,
+                        maLop: maLop,
+                        maMon: subject,
+                        hocKy: sem,
+                        diem15p: 8.0,        // Ví dụ: điểm 15 phút mặc định
+                        diem1Tiet: 7.0,       // Ví dụ: điểm 1 tiết mặc định
+                        diemTB: 7.5,          // Ví dụ: điểm trung bình mặc định
+                        createdAt: new Date(),
+                        updatedAt: new Date(),
+                    });
+                }
+            }
+        }
+
+        // Chèn các bản ghi vào bảng BangDiems
+        await queryInterface.bulkInsert('BangDiems', bangdiemRecords);
     },
 
     down: async (queryInterface, Sequelize) => {
