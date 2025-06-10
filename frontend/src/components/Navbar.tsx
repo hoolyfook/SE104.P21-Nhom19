@@ -127,7 +127,7 @@ export default function Navbar() {
           />
           {menuOpen && (
             <div
-              className="absolute right-0 top-full mt-2 w-48 bg-white rounded-md shadow-lg py-2"
+              className="absolute right-0 top-full mt-2 w-48 bg-white rounded-md shadow-lg py-2 z-100"
               onMouseEnter={() => setMenuOpen(true)}
               onMouseLeave={() => setMenuOpen(false)}
             >
