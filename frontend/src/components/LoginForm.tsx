@@ -8,6 +8,7 @@ import { Card, CardContent} from "@/components/ui/card";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "../api/axiosClient";
+import CryptoJS from "crypto-js";
 
 const loginSchema = z.object({
   email: z.string().email("Email không hợp lệ"),
@@ -25,7 +26,16 @@ export default function LoginForm() {
   const onSubmit = async (data: any) => {
     setLoading(true);
     try {
-      const response = await axios.post("/users/login", data, {
+      // 🔒 Băm SHA256 hai lần
+      console.log(data.password)
+      const hashedPassword = CryptoJS.SHA256(
+        CryptoJS.SHA256(data.password).toString()
+      ).toString();
+      console.log(hashedPassword)
+      const response = await axios.post("/users/login", {
+        ...data,
+        password: hashedPassword,
+      }, {
         withCredentials: true,
       });
 
@@ -34,14 +44,12 @@ export default function LoginForm() {
       console.log("Login response:", response.data);
 
       if (EM === "Get JWT success") {
-        // ✅ Login was successful
         navigate("/profile");
       } else if (EM === "User does not exist") {
         alert("Người dùng không tồn tại. Vui lòng kiểm tra lại email.");
       } else if (EM === "Wrong password") {
         alert("Mật khẩu không đúng. Vui lòng thử lại.");
       } else {
-        // Generic failure message
         alert(EM || "Đăng nhập thất bại. Vui lòng kiểm tra thông tin!");
       }
     } catch (error: any) {
@@ -51,8 +59,6 @@ export default function LoginForm() {
       setLoading(false);
     }
   };
-
-
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
