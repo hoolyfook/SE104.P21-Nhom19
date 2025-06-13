@@ -29,17 +29,30 @@ export default function LoginForm() {
         withCredentials: true,
       });
 
-      console.log('Login response:', response.data);
+      const { EM } = response.data;
 
-      // ✅ Điều hướng sau khi login thành công
-      navigate("/profile");
+      console.log("Login response:", response.data);
+
+      if (EM === "Get JWT success") {
+        // ✅ Login was successful
+        navigate("/profile");
+      } else if (EM === "User does not exist") {
+        alert("Người dùng không tồn tại. Vui lòng kiểm tra lại email.");
+      } else if (EM === "Wrong password") {
+        alert("Mật khẩu không đúng. Vui lòng thử lại.");
+      } else {
+        // Generic failure message
+        alert(EM || "Đăng nhập thất bại. Vui lòng kiểm tra thông tin!");
+      }
     } catch (error: any) {
       console.error("Login failed:", error?.response?.data || error.message);
-      alert("Đăng nhập thất bại. Vui lòng kiểm tra thông tin!");
+      alert("Đăng nhập thất bại. Vui lòng thử lại sau!");
     } finally {
       setLoading(false);
     }
   };
+
+
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
