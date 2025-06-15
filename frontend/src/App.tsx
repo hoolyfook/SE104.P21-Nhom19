@@ -13,6 +13,7 @@ import DanhSachQuyDinh from "./pages/DanhSachQuyDinh";
 import DanhSachMonHoc from "./pages/DanhSachMonHoc";
 import PhanCongGiangVien from "./pages/PhanCongGiangVien";
 import KetQuaHocTap from "./pages/KetQuaHocTap";
+import BaoCaoMonComponent from "./pages/TongKetMonHoc.tsx";
 import { AuthProvider } from "./context/AuthContext";
 
 function Layout() {
@@ -35,6 +36,7 @@ function Layout() {
         <Route path="/phanconggiangvien" element={<PhanCongGiangVien />} />
         <Route path="/ketquahoctap" element={<KetQuaHocTap />} />
         <Route path="/BangDiem" element={<BangDiemComponent />} />
+        <Route path="/TongKetMon" element={<BaoCaoMonComponent />} />
       </Routes>
       {!hideNavbar && <Footer />}
     </>
