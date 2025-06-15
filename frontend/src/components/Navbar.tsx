@@ -91,8 +91,11 @@ export default function Navbar() {
               <Link to="/phanconggiangvien" className="text-[16px] font-bold px-4 py-2 hover:bg-gray-300 hover:text-black rounded">
                 Phân công giảng viên
               </Link>
+              <Link to="/TongKetMon" className="text-[16px] font-bold px-4 py-2 hover:bg-gray-300 hover:text-black rounded">
+                Tổng kết môn học
+              </Link>
               <Link to="/tongkethocki" className="text-[16px] font-bold px-4 py-2 hover:bg-gray-300 hover:text-black rounded">
-                Báo cáo học kì
+                Tổng kết học kì
               </Link>
               
             </>
