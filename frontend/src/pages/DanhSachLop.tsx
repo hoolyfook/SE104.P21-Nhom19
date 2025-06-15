@@ -262,31 +262,36 @@ const exportClassToPDF = () => {
         {students.length > 0 && (
           <Table className="mt-4">
             <TableHeader>
-            <TableRow>
-              <TableHead>Mã HS</TableHead>
-              <TableHead>Họ tên</TableHead>
-              <TableHead>Giới tính</TableHead>
-              <TableHead>Ngày sinh</TableHead>
-              <TableHead>Địa chỉ</TableHead>
-              <TableHead>Hành động</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {students.map((s) => (
-              <TableRow key={s.id}>
-                <TableCell>{s.maHS}</TableCell>
-                <TableCell>{s.Users.hoTen}</TableCell>
-                <TableCell>{s.Users.gioiTinh}</TableCell>
-                <TableCell>{new Date(s.Users.ngaySinh).toLocaleDateString('vi-VN')}</TableCell>
-                <TableCell>{s.Users.diaChi}</TableCell>
-                <TableCell>
-                  <Button variant="destructive" size="sm" onClick={() => handleDeleteStudent(s.id)}>
-                    Xoá
-                  </Button>
-                </TableCell>
+              <TableRow>
+                <TableHead>STT</TableHead> {/* Thay vì Mã HS */}
+                <TableHead>Họ tên</TableHead>
+                <TableHead>Giới tính</TableHead>
+                <TableHead>Ngày sinh</TableHead>
+                <TableHead>Địa chỉ</TableHead>
+                <TableHead>Hành động</TableHead>
               </TableRow>
-            ))}
-          </TableBody>
+            </TableHeader>
+            <TableBody>
+              {students.map((s, index) => (
+                <TableRow key={s.id}>
+                  <TableCell>{index + 1}</TableCell> {/* STT bắt đầu từ 1 */}
+                  <TableCell>{s.Users.hoTen}</TableCell>
+                  <TableCell>{s.Users.gioiTinh}</TableCell>
+                  <TableCell>{new Date(s.Users.ngaySinh).toLocaleDateString('vi-VN')}</TableCell>
+                  <TableCell>{s.Users.diaChi}</TableCell>
+                  <TableCell>
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => handleDeleteStudent(s.id)}
+                    >
+                      Xoá
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+
             {selectedClass && students.length > 0 && (
               <div className="flex justify-end mb-2">
                 <Button variant="outline" onClick={exportClassToPDF}>
@@ -295,6 +300,7 @@ const exportClassToPDF = () => {
               </div>
             )}
           </Table>
+
         )}
       </CardContent>
     </Card>
