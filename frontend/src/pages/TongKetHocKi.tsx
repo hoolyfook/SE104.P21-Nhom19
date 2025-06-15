@@ -1,213 +1,193 @@
-import { useState } from "react";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardContent } from "@/components/ui/card";
-import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
-import axios from "axios";
-import jsPDF from "jspdf";
-import "jspdf-autotable";
-import autoTable from "jspdf-autotable";
+import { useState, useEffect } from "react";
+import axios from '../api/axiosClient';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Card } from "@/components/ui/card";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
-// Define the type for a report row
-type ReportRow = {
-  stt: number;
-  class: string;
-  totalStudents: number;
-  passed: number;
-  ratio: string;
-};
+const semesters = ["Học kỳ I", "Học kỳ II"];
 
-// Mock API function to generate random data
-const fetchReportData = async (semester: string, academicYear: string): Promise<ReportRow[]> => {
-  console.log(semester, academicYear);
-  
-  // Generate random number of rows (between 3 and 10)
-  const rowCount = Math.floor(Math.random() * 8) + 3;
-  const classes = ["1A", "1B", "2A", "2B", "3A", "3B", "4A", "4B", "5A", "5B"];
-  
-  const data: ReportRow[] = Array.from({ length: rowCount }, (_, index) => {
-    // Random class name
-    const className = `Lớp ${classes[Math.floor(Math.random() * classes.length)]}`;
-    // Random total students (20–40)
-    const totalStudents = Math.floor(Math.random() * 21) + 20;
-    // Random passed students (0 to totalStudents)
-    const passed = Math.floor(Math.random() * (totalStudents + 1));
-    // Calculate ratio
-    const ratio = totalStudents > 0 ? ((passed / totalStudents) * 100).toFixed(1) + "%" : "0%";
-
-    return {
-      stt: index + 1,
-      class: className,
-      totalStudents,
-      passed,
-      ratio,
-    };
-  });
-
-  return data;
-};
-
-// Function to generate and download PDF
-const exportToPDF = (semester: string, academicYear: string, reportData: ReportRow[]) => {
-  console.log(semester, academicYear, reportData);
-  try {
-    const doc = new jsPDF();
-
-    // Set font to Times, which supports Vietnamese characters
-    doc.setFont("times", "normal");
-
-    // Add title with UTF-8 support
-    doc.text(`Báo Cáo Tổng Kết Học Kỳ ${semester} - Năm Học ${academicYear}`, 14, 20);
-
-    // Define table columns and data
-    const tableColumn = ["STT", "Lớp", "Sĩ Số", "Số Lượng Đạt", "Tỉ Lệ"];
-    const tableRows: (string | number)[][] = reportData.map((row: ReportRow) => [
-      row.stt,
-      row.class,
-      row.totalStudents,
-      row.passed,
-      row.ratio,
-    ]);
-
-    // Generate table in PDF with UTF-8 support
-    autoTable(doc, {
-      head: [tableColumn],
-      body: tableRows,
-      startY: 30,
-      styles: { font: "times", fontSize: 10, halign: "center" },
-      headStyles: { fillColor: [0, 102, 204], font: "times", halign: "center" },
-      bodyStyles: { font: "times" },
-    });
-
-    // Save the PDF
-    doc.save(`BaoCao_HocKy${semester}_${academicYear}.pdf`);
-  } catch (error) {
-    console.error("Error generating PDF:", error);
-    alert("Có lỗi xảy ra khi xuất PDF!");
+// Generate school years (e.g., "2024" to "2020")
+const getSchoolYears = () => {
+  const currentYear = new Date().getFullYear();
+  const years = [];
+  for (let i = 0; i < 10; i++) {
+    const year = currentYear - i;
+    years.push(`${year}-${year + 1}`);
   }
+  return years;
 };
 
-const BaoCaoTongKet = () => {
-  // State for inputs and data
-  const [semester, setSemester] = useState<string>("");
-  const [academicYear, setAcademicYear] = useState<string>("");
-  const [reportData, setReportData] = useState<ReportRow[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
+const schoolYears = getSchoolYears();
 
-  // Handle input changes
-  const handleSemesterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSemester(e.target.value);
+interface ClassReport {
+  maLop: string;
+  hocKy: string;
+  namHoc: string;
+  siSo: number;
+  soLuongDat: number;
+  tiLe: number;
+  Lops: {
+    tenLop: string;
   };
+}
 
-  const handleAcademicYearChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setAcademicYear(e.target.value);
-  };
+const ClassReport = () => {
+  const [selectedSemester, setSelectedSemester] = useState(semesters[0]);
+  const [selectedNamHoc, setSelectedNamHoc] = useState(schoolYears[0]);
+  const [reports, setReports] = useState<ClassReport[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  // Handle fetching and displaying report data
-  const handleDisplayReport = async () => {
-    if (!semester || !academicYear) {
-      alert("Vui lòng nhập học kỳ và năm học!");
-      return;
-    }
+  // Map semester display names to API values
+  const semesterToApiValue = (semester: string) => (semester === "Học kỳ I" ? "I" : "II");
 
+  // Fetch class report data from API using axios
+  const fetchReports = async () => {
     setLoading(true);
+    setError(null);
     try {
-      // Simulate API call with random data
-      const data = await fetchReportData(semester, academicYear);
-      setReportData(data);
-    } catch (error) {
-      console.error("Error fetching report data:", error);
-      alert("Có lỗi xảy ra khi lấy dữ liệu báo cáo!");
+      const response = await axios.get('/admin/baocao/lops', {
+        params: {
+          hocKy: semesterToApiValue(selectedSemester),
+          namHoc: selectedNamHoc,
+        },
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': '*/*',
+        },
+        withCredentials: true
+      });
+
+      console.log("Full API Response:", response); // Debug full response
+
+      if (response.status === 200) {
+        if (response.data.EC === "0") {
+          setReports(response.data.DT || []);
+        } else {
+          throw new Error(response.data.EM || "Lỗi khi tải báo cáo");
+        }
+      } else {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+    } catch (err: any) {
+      let errorMessage = "Đã xảy ra lỗi không xác định";
+      
+      if (err.response) {
+        // The request was made and the server responded with a status code
+        console.error("Error response data:", err.response.data);
+        console.error("Error status:", err.response.status);
+        console.error("Error headers:", err.response.headers);
+        
+        if (err.response.status === 403) {
+          errorMessage = "Bạn không có quyền truy cập tài nguyên này";
+        } else if (err.response.data && err.response.data.message) {
+          errorMessage = err.response.data.message;
+        } else if (err.response.data && err.response.data.EM) {
+          errorMessage = err.response.data.EM;
+        }
+      } else if (err.request) {
+        // The request was made but no response was received
+        console.error("No response received:", err.request);
+        errorMessage = "Không nhận được phản hồi từ máy chủ";
+      } else {
+        // Something happened in setting up the request
+        console.error("Request setup error:", err.message);
+        errorMessage = err.message;
+      }
+
+      setError(errorMessage);
+      setReports([]);
     } finally {
       setLoading(false);
     }
   };
 
-  // Handle PDF export
-  const handleExportPDF = () => {
-    if (reportData.length === 0) {
-      alert("Chưa có dữ liệu để xuất PDF. Vui lòng hiển thị báo cáo trước!");
-      return;
-    }
-    exportToPDF(semester, academicYear, reportData);
-  };
+  // Fetch data when semester or namHoc changes
+  useEffect(() => {
+    fetchReports();
+  }, [selectedSemester, selectedNamHoc]);
 
   return (
-    <div className="container mx-auto p-4">
-      <Card>
-        <CardHeader>
-          <h2 className="text-2xl font-bold">Báo Cáo Tổng Kết Học Kỳ</h2>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-            <div>
-              <Label htmlFor="semester">Học kỳ:</Label>
-              <Input
-                id="semester"
-                value={semester}
-                onChange={handleSemesterChange}
-                placeholder="Nhập học kỳ (VD: 1, 2)"
-              />
-            </div>
-            <div>
-              <Label htmlFor="academicYear">Năm học:</Label>
-              <Input
-                id="academicYear"
-                value={academicYear}
-                onChange={handleAcademicYearChange}
-                placeholder="Nhập năm học (VD: 2024-2025)"
-              />
-            </div>
-          </div>
+    <div className="min-h-screen p-10">
+      <Card className="p-5 w-full max-w-4xl mx-auto shadow-lg">
+        <h2 className="text-center text-2xl font-bold mb-6">Báo Cáo Toàn Trường</h2>
+        <div className="mb-5 flex items-center gap-4">
+          <Select value={selectedSemester} onValueChange={setSelectedSemester}>
+            <SelectTrigger className="w-full max-w-xs bg-gray-100 border-gray-300">
+              <SelectValue placeholder="Chọn học kỳ" />
+            </SelectTrigger>
+            <SelectContent>
+              {semesters.map((s) => (
+                <SelectItem key={s} value={s}>
+                  {s}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select value={selectedNamHoc} onValueChange={setSelectedNamHoc}>
+            <SelectTrigger className="w-full max-w-xs bg-gray-100 border-gray-300">
+              <SelectValue placeholder="Chọn năm học" />
+            </SelectTrigger>
+            <SelectContent>
+              {schoolYears.map((year) => (
+                <SelectItem key={year} value={year}>
+                  {year}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
 
-          {/* Report Table */}
-          {reportData.length > 0 && (
-            <Table>
+        {loading && (
+          <div className="flex justify-center py-10">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+          </div>
+        )}
+        
+        {error && (
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">
+            <strong className="font-bold">Lỗi!</strong>
+            <span className="block sm:inline"> {error}</span>
+          </div>
+        )}
+        
+        {!loading && !error && reports.length === 0 && (
+          <div className="text-center py-10 text-gray-500">
+            Không có dữ liệu báo cáo cho {selectedSemester}, năm học {selectedNamHoc}.
+          </div>
+        )}
+        
+        {!loading && !error && reports.length > 0 && (
+          <div className="overflow-x-auto">
+            <Table className="min-w-full">
               <TableHeader>
-                <TableRow>
-                  <TableHead>STT</TableHead>
-                  <TableHead>Lớp</TableHead>
-                  <TableHead>Sĩ Số</TableHead>
-                  <TableHead>Số Lượng Đạt</TableHead>
-                  <TableHead>Tỉ Lệ</TableHead>
+                <TableRow className="bg-gray-200">
+                  <TableHead className="text-center">STT</TableHead>
+                  <TableHead className="text-center">Mã Lớp</TableHead>
+                  <TableHead className="text-center">Tên Lớp</TableHead>
+                  <TableHead className="text-center">Sĩ Số</TableHead>
+                  <TableHead className="text-center">Số Lượng Đạt</TableHead>
+                  <TableHead className="text-center">Tỷ Lệ (%)</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {reportData.map((row: ReportRow) => (
-                  <TableRow key={row.stt}>
-                    <TableCell>{row.stt}</TableCell>
-                    <TableCell>{row.class}</TableCell>
-                    <TableCell>{row.totalStudents}</TableCell>
-                    <TableCell>{row.passed}</TableCell>
-                    <TableCell>{row.ratio}</TableCell>
+                {reports.map((report, index) => (
+                  <TableRow key={`${report.maLop}-${index}`} className="hover:bg-gray-50">
+                    <TableCell className="text-center">{index + 1}</TableCell>
+                    <TableCell className="text-center">{report.maLop}</TableCell>
+                    <TableCell className="text-center">{report.Lops?.tenLop || 'N/A'}</TableCell>
+                    <TableCell className="text-center">{report.siSo}</TableCell>
+                    <TableCell className="text-center">{report.soLuongDat}</TableCell>
+                    <TableCell className="text-center">{report.tiLe.toFixed(2)}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
-          )}
-
-          {/* Action Buttons */}
-          <div className="mt-4 flex gap-4">
-            <Button
-              onClick={handleDisplayReport}
-              disabled={loading}
-              className="bg-green-500 hover:bg-green-600"
-            >
-              {loading ? "Đang xử lý..." : "Hiển Thị Báo Cáo"}
-            </Button>
-            <Button
-              onClick={handleExportPDF}
-              disabled={loading || reportData.length === 0}
-              className="bg-blue-500 hover:bg-blue-600"
-            >
-              Xuất PDF
-            </Button>
           </div>
-        </CardContent>
+        )}
       </Card>
     </div>
   );
 };
 
-export default BaoCaoTongKet;
+export default ClassReport;

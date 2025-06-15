@@ -284,6 +284,39 @@ module.exports = {
         await queryInterface.bulkInsert('Users', [
             // Admin
             {
+                hoTen: 'Admin',
+                gioiTinh: 'Female',
+                ngaySinh: '2005-04-01', // 2005 -> 15 years old in 2020
+                diaChi: 'Hanoi, Vietnam',
+                email: 'ad@example.com',
+                mk: 'password123',
+                groupUserId: 1, // Reference a group from GroupUsers
+                createdAt: new Date(),
+                updatedAt: new Date(),
+            },
+            {
+                hoTen: 'GiangVien',
+                gioiTinh: 'Female',
+                ngaySinh: '2005-04-01', // 2005 -> 15 years old in 2020
+                diaChi: 'Hanoi, Vietnam',
+                email: 'gv@example.com',
+                mk: 'password123',
+                groupUserId: 2, // Reference a group from GroupUsers
+                createdAt: new Date(),
+                updatedAt: new Date(),
+            },
+            {
+                hoTen: 'User',
+                gioiTinh: 'Female',
+                ngaySinh: '2005-04-01', // 2005 -> 15 years old in 2020
+                diaChi: 'Hanoi, Vietnam',
+                email: 'user@example.com',
+                mk: 'password123',
+                groupUserId: 3, // Reference a group from GroupUsers
+                createdAt: new Date(),
+                updatedAt: new Date(),
+            },
+            {
                 hoTen: 'Admin User',
                 gioiTinh: 'Male',
                 ngaySinh: '1980-01-01',

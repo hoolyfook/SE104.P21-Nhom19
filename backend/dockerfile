@@ -1,24 +1,33 @@
-# Use a valid Node.js LTS version
 FROM node:20.11.0
 
-# Set working directory
 WORKDIR /app
 
-# Copy package.json and package-lock.json for caching
-COPY package*.json ./
+# Install bash (needed for shell script logic)
+RUN apt-get update && apt-get install -y bash && rm -rf /var/lib/apt/lists/*
 
-# Install dependencies
+# Copy package files and install dependencies
+COPY package*.json ./
 RUN npm install
 
-# Copy the rest of the application code
+# Copy app code
 COPY . .
 
-# Expose the backend port
 EXPOSE 8080
 
-# Create and set permissions for entrypoint script
-COPY entrypoint.sh /app/entrypoint.sh
-RUN chmod +x /app/entrypoint.sh
-
-# Use entrypoint to handle DB initialization and start the app
-ENTRYPOINT ["/app/entrypoint.sh"]
+# Inline DB setup and app start as shell command
+CMD bash -c '\
+  echo "🔄 Waiting for database to be ready..."; \
+  until npx sequelize-cli db:migrate:status > /dev/null 2>&1; do \
+    echo "⏳ Database not ready, retrying..."; \
+    sleep 2; \
+  done; \
+  echo "💣 Dropping DB..."; \
+  npx sequelize-cli db:drop; \
+  echo "🛠 Creating DB..."; \
+  npx sequelize-cli db:create; \
+  echo "📦 Running migrations..."; \
+  npx sequelize-cli db:migrate; \
+  echo "🌱 Seeding DB..."; \
+  npx sequelize-cli db:seed:all; \
+  echo "🚀 Starting app..."; \
+  npm start'
