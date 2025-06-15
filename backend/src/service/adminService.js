@@ -1349,8 +1349,8 @@ const getBaoCaoMons = async (query) => {
 }
 const getKetQuaHocSinh = async () => {
     try {
-        // Lấy tất cả bảng điểm với các trường: maHS, hocKy, diemTB và maLop,
-        // đồng thời include bảng Lops để lấy tên lớp
+        // Lấy tất cả bảng điểm với các trường: maHS, hocKy, diemTB, maLop
+        // Include bảng Lops để lấy tên lớp và Users để lấy tên học sinh
         let bangdiems = await db.BangDiems.findAll({
             attributes: ['maHS', 'hocKy', 'diemTB', 'maLop'],
             include: [
@@ -1358,6 +1358,11 @@ const getKetQuaHocSinh = async () => {
                     model: db.Lops,
                     as: 'Lops',
                     attributes: ['tenLop'],
+                },
+                {
+                    model: db.Users,
+                    as: 'Users',  // Sử dụng alias "Users" theo kết quả trả về
+                    attributes: ['hoTen'],
                 }
             ],
         });
@@ -1381,18 +1386,18 @@ const getKetQuaHocSinh = async () => {
             }
         });
 
-        // Tính trung bình điểm cho học kỳ của mỗi học sinh và 
-        // tìm tên lớp từ bản ghi đầu tiên của mỗi học sinh
+        // Tính trung bình điểm cho mỗi học sinh theo học kỳ
+        // Và lấy thông tin tenLop, hoTen từ bản ghi đầu tiên của mỗi học sinh
         let result = [];
         for (let maHS in studentData) {
             let semI = studentData[maHS]["I"];
             let semII = studentData[maHS]["II"];
             let avgI = semI.length > 0 ? semI.reduce((sum, val) => sum + (val || 0), 0) / semI.length : null;
             let avgII = semII.length > 0 ? semII.reduce((sum, val) => sum + (val || 0), 0) / semII.length : null;
-            // Lấy tên lớp từ bản ghi đầu tiên khớp với maHS
-            let record = bangdiems.find(item => item.maHS === maHS);
+            let record = bangdiems.find(item => item.maHS === Number(maHS));
             let tenLop = record && record.Lops ? record.Lops.tenLop : null;
-            result.push({ maHS, tenLop, avgI, avgII });
+            let hoTen = record && record.Users ? record.Users.hoTen : null;
+            result.push({ maHS, hoTen, tenLop, avgI, avgII });
         }
 
         return {
