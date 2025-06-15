@@ -44,8 +44,8 @@ const getBangDiem = async (id, query) => {
             }
         }
         let bangdiem = await db.BangDiems.findAll({
-            where: { maLop: query.maLop, maMon: query.maMon },
-            attributes: ['id', 'maHS', 'diem15p', 'diem1Tiet', 'diemTB'],
+            where: { maLop: query.maLop, maMon: query.maMon, hocKy: query.hocKy },
+            attributes: ['id', 'maHS', 'diem15p', 'diem1Tiet', 'diemTB', 'hocKy'],
             include: [
                 {
                     model: db.Users,

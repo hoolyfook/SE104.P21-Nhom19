@@ -1135,6 +1135,12 @@ let initApiRoutes = (app) => {
    *           type: string
    *         required: true
    *         description: The subject ID (maMon) to retrieve the gradebook for
+   *       - in: query
+   *         name: hocKy
+   *         schema:
+   *           type: string
+   *         required: true
+   *         description: The semester (hocKy) to retrieve the gradebook for
    *     responses:
    *       200:
    *         description: Gradebook retrieved successfully
