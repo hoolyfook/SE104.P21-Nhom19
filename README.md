@@ -5,3 +5,9 @@ GV: Đỗ Thị Thanh Tuyền
 ## Danh sách thành viên
 - Lê Thanh Lâm - 21521025
 - Nguyễn Văn Long - 21521097
+
+## HOW TO RUN THIS PROJECT
+```
+docker-compose down && docker-compose up -d --build
+```
+
