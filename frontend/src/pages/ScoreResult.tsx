@@ -126,9 +126,9 @@ export default function BangDiemComponent() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {bangDiem.map(diem => (
+              {bangDiem.map((diem, index) => (
                 <TableRow key={diem.id}>
-                  <TableCell>{diem.id}</TableCell>
+                  <TableCell>{index + 1}</TableCell> {/* STT bắt đầu từ 1 */}
                   <TableCell>{diem.Users.hoTen}</TableCell>
                   <TableCell>
                     <Input
