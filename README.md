@@ -21,7 +21,9 @@ docker-compose down && docker-compose up -d --build
 ```
 
 Sau khi hoàn tất, hệ thống sẽ hoạt động tại địa chỉ:
-👉 http://localhost:3000 (hoặc cổng được cấu hình)
+👉 Front-end: http://localhost:5173
+👉 API-docs: http://localhost:8080/api-docs
+
 
 ## 🔗 Liên kết dự án
 
