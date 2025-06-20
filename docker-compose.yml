@@ -22,7 +22,6 @@ services:
       - REACT_URL= http://localhost:5173
       - JWT_KEY = thitnguoixoi
       - NODE_ENV = development
-      - JWT_KEY = thitnguoixoi
 
   fe:
     build: ./frontend

@@ -74,15 +74,31 @@ export default function BangDiemComponent() {
   };
 
   const submitUpdate = async () => {
+    const selected = phanCongList.find(pc => `${pc.maLop}_${pc.maMon}` === selectedPC);
+    if (!selected) return;
+
     try {
-      await axios.put('http://localhost:8080/api/v1/giangvien/bangdiem', bangDiem, {
+      const payload = bangDiem.map((diem) => ({
+        maLop: selected.maLop,
+        maMon: selected.maMon,
+        hocKy: selectedHocKi,
+        maHS: diem.maSV,
+        diem15p: diem.diem15p,
+        diem1Tiet: diem.diem1Tiet,
+        diemTB: diem.diemTB,
+      }));
+
+      await axios.put('http://localhost:8080/api/v1/giangvien/bangdiem', payload, {
         headers: { 'Content-Type': 'application/json' },
       });
-      alert('Cập nhật thành công');
+
+      alert('✅ Cập nhật điểm thành công');
     } catch (err) {
-      alert('Lỗi khi cập nhật');
+      alert('❌ Lỗi khi cập nhật');
+      console.error(err);
     }
   };
+
 
   return (
     <div className="p-4 space-y-4">
