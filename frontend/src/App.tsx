@@ -14,6 +14,7 @@ import DanhSachMonHoc from "./pages/DanhSachMonHoc";
 import PhanCongGiangVien from "./pages/PhanCongGiangVien";
 import KetQuaHocTap from "./pages/KetQuaHocTap";
 import BaoCaoMonComponent from "./pages/TongKetMonHoc.tsx";
+import ChangePassword from "./pages/ChangPass.tsx";
 import { AuthProvider } from "./context/AuthContext";
 
 function Layout() {
@@ -25,6 +26,7 @@ function Layout() {
       {!hideNavbar && <Navbar />}
       <Routes>
         <Route path="/" element={<LoginForm />} />
+        <Route path="/settings" element={<ChangePassword />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/DanhSachQuyDinh" element={<DanhSachQuyDinh />} />
         <Route path="/DanhSachMonHoc" element={<DanhSachMonHoc />} />
