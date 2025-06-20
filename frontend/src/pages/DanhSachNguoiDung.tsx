@@ -86,8 +86,10 @@ export default function Dashboard() {
 
       const { EM } = response.data;
 
-      if (EM !== "Create User success") {
-        setErrorMessage(EM); // hiển thị thông báo lỗi từ API
+      // ✅ Cho phép đóng Dialog khi thành công (tạo hoặc sửa)
+      const successMessages = ["Create User success", "Update User success"];
+      if (!successMessages.includes(EM)) {
+        setErrorMessage(EM);
         return;
       }
 
