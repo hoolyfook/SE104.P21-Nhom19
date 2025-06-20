@@ -29,6 +29,7 @@ export default function BangDiemComponent() {
   const [selectedPC, setSelectedPC] = useState<string>('');
   const [bangDiem, setBangDiem] = useState<Diem[]>([]);
   const [loading, setLoading] = useState(false);
+  const [selectedHocKi, setSelectedHocKi] = useState<string>('I');
 
   useEffect(() => {
     const fetchPhanCong = async () => {
@@ -49,10 +50,13 @@ export default function BangDiemComponent() {
 
     try {
       setLoading(true);
+      console.log (selected.maLop, selected.maMon,selectedHocKi)
+
       const res = await axios.get('http://localhost:8080/api/v1/giangvien/bangdiem', {
         params: {
           maLop: selected.maLop,
-          maMon: selected.maMon
+          maMon: selected.maMon,
+          hocKy: selectedHocKi,
         },
         headers: { accept: 'application/json' }
       });
@@ -95,6 +99,15 @@ export default function BangDiemComponent() {
             ))}
           </SelectContent>
         </Select>
+        <Select onValueChange={setSelectedHocKi} defaultValue="I">
+          <SelectTrigger className="w-[150px]">
+            <SelectValue placeholder="Chọn học kỳ" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="I">Học kỳ I</SelectItem>
+            <SelectItem value="II">Học kỳ II</SelectItem>
+          </SelectContent>
+        </Select>
         <Button onClick={fetchBangDiem} disabled={loading || !selectedPC}>
           {loading ? 'Đang tải...' : 'Lấy bảng điểm'}
         </Button>
@@ -113,9 +126,9 @@ export default function BangDiemComponent() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {bangDiem.map(diem => (
+              {bangDiem.map((diem, index) => (
                 <TableRow key={diem.id}>
-                  <TableCell>{diem.id}</TableCell>
+                  <TableCell>{index + 1}</TableCell> {/* STT bắt đầu từ 1 */}
                   <TableCell>{diem.Users.hoTen}</TableCell>
                   <TableCell>
                     <Input
