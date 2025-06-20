@@ -53,14 +53,6 @@ const deleteStudent = async (id: any) => {
   }
 };
 
-const updateStudent = async (data: any) => {
-  try {
-    await axios.put("http://localhost:8080/api/v1/admin/users", data);
-  } catch (error) {
-    console.error("Failed to update user:", error);
-  }
-};
-
 export default function Dashboard() {
   const [students, setStudents] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -69,6 +61,7 @@ export default function Dashboard() {
   const [editing, setEditing] = useState<any | null>(null);
   const { register, handleSubmit, reset, setValue } = useForm();
   const studentsPerPage = 20;
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
     fetchStudents().then((data: any) => setStudents(data));
@@ -80,23 +73,33 @@ export default function Dashboard() {
         ...data,
         id: editing?.id,
         GroupUsers: data.GroupUsers.toLowerCase(),
-        ngaySinh: new Date(data.ngaySinh).toISOString(), // Format date for API
+        ngaySinh: new Date(data.ngaySinh).toISOString(),
       };
 
-      console.log("Saving user, payload:", formattedData); // Debug: Log payload
+      let response;
 
       if (editing) {
-        await updateStudent(formattedData);
+        response = await axios.put("http://localhost:8080/api/v1/admin/users", formattedData);
       } else {
-        await axios.post("http://localhost:8080/api/v1/admin/users", formattedData);
+        response = await axios.post("http://localhost:8080/api/v1/admin/users", formattedData);
       }
 
+      const { EM } = response.data;
+
+      if (EM !== "Create User success") {
+        setErrorMessage(EM); // hiển thị thông báo lỗi từ API
+        return;
+      }
+
+      setErrorMessage(null);
       setOpen(false);
       reset();
       setEditing(null);
+
       const updated = await fetchStudents();
       setStudents(updated);
-    } catch (err) {
+    } catch (err: any) {
+      setErrorMessage(err?.message || "Lỗi không xác định");
       console.error("Failed to save user:", err);
     }
   };

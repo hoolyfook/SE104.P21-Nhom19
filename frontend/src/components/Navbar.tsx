@@ -138,7 +138,7 @@ export default function Navbar() {
                 Hồ sơ
               </Link>
               <Link to="/settings" className="block px-4 py-2 text-gray-700 hover:bg-gray-100">
-                Cài đặt
+                Đổi mật khẩu
               </Link>
               <button
                 onClick={handleLogout}
