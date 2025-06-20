@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 
 interface Diem {
   id: number;
-  maSV: number;
+  maHS: number;
   hoTen: string;
   diem15p: number;
   diem1Tiet: number;
@@ -78,26 +78,32 @@ export default function BangDiemComponent() {
     if (!selected) return;
 
     try {
-      const payload = bangDiem.map((diem) => ({
-        maLop: selected.maLop,
-        maMon: selected.maMon,
-        hocKy: selectedHocKi,
-        maHS: diem.maSV,
-        diem15p: diem.diem15p,
-        diem1Tiet: diem.diem1Tiet,
-        diemTB: diem.diemTB,
-      }));
+      for (const diem of bangDiem) {
+        const payload = {
+          maLop: selected.maLop,
+          maMon: selected.maMon,
+          hocKy: selectedHocKi,
+          maHS: diem.maHS,
+          diem15p: diem.diem15p,
+          diem1Tiet: diem.diem1Tiet
+        };
+        
+        console.log("UPDATE",payload)
+        console.log(diem)
+        console.log(selected)
 
-      await axios.put('http://localhost:8080/api/v1/giangvien/bangdiem', payload, {
-        headers: { 'Content-Type': 'application/json' },
-      });
+        await axios.put("http://localhost:8080/api/v1/giangvien/bangdiem", payload, {
+          headers: { "Content-Type": "application/json" },
+        });
+      }
 
-      alert('✅ Cập nhật điểm thành công');
+      alert("✅ Cập nhật điểm thành công");
     } catch (err) {
-      alert('❌ Lỗi khi cập nhật');
-      console.error(err);
+      console.error("❌ Lỗi khi cập nhật điểm:", err);
+      alert("❌ Đã xảy ra lỗi khi cập nhật điểm");
     }
   };
+
 
 
   return (
