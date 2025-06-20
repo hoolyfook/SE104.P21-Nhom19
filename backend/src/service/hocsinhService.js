@@ -57,8 +57,42 @@ const getBangDiem = async (id, query) => {
         };
     }
 }
-
+const getLops = async (id) => {
+    try {
+        let lops = await db.HocSinh_Lops.findAll({
+            where: { maHS: id },
+            include: [
+                {
+                    model: db.Lops,
+                    as: "Lops",
+                    attributes: ["maLop", "tenLop"],
+                },
+            ],
+        });
+        if (lops && lops.length > 0) {
+            return {
+                EM: "Get lop success",
+                EC: "0",
+                DT: lops,
+            };
+        } else {
+            return {
+                EM: "Get lop failed",
+                EC: "-1",
+                DT: [],
+            };
+        }
+    } catch (e) {
+        console.log(e);
+        return {
+            EM: "Error from server",
+            EC: "-1",
+            DT: [],
+        };
+    }
+}
 const hsService = {
-    getBangDiem
+    getBangDiem,
+    getLops,
 }
 export default hsService;
